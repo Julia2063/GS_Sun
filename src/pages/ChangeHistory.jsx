@@ -4,6 +4,7 @@ import { ChangeTableHeader } from "../components/ChangeTableHeader"
 import { getCollectionWhereKeyValue } from '../helpers/firebaseControl';
 import { AppContext } from '../components/AppProvider';
 import { LineChange } from '../components/LineChange';
+import { getDate } from '../App';
 
 export const ChangeHistory = () => {
   const [changes, setChanges] = useState([]);
@@ -45,8 +46,8 @@ export const ChangeHistory = () => {
             <ChangeTableHeader />
             {changes.sort((a, b) => {
          
-              return new Date(a.changeDate) - new Date(b.changeDate);
-            }).reverse().map(el => {
+              return new Date(getDate(b.changeDate)) - new Date(getDate( a.changeDate));
+            }).map(el => {
                 return (
                     <LineChange data={el}/>
                 )

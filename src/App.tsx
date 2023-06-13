@@ -16,6 +16,11 @@ import Operator from "./pages/Operator";
 import { ChangeHistory } from "./pages/ChangeHistory";
 import Content from "./pages/Content";
 
+export const getDate = (date: string) => {
+  const year = date.split(' ');
+  return `${year[0]} ${year[1].split('.').reverse().join('/')}`
+};
+
 function App() {
   const { user, userRole, location } = useContext(AppContext);
 

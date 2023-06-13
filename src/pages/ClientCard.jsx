@@ -13,6 +13,7 @@ import { LineTransaction } from '../components/LineTransaction';
 import { TransactionOperatorTableHeader } from '../components/TransactionOperatorTableHeader';
 import { LineTransactionOperator } from '../components/LineTransactionOperator';
 import { ModalMoneyWriteOff } from '../components/ModalMoneyWriteOff';
+import { getDate } from '../App';
 
 export const ClientCard = ({ isOperator }) => {
   const [client, setClient] = useState(null);
@@ -305,7 +306,7 @@ export const ClientCard = ({ isOperator }) => {
           ? (
             clientTransactions.filter(el => el.type === 'write-off').sort((a, b) => {
          
-            return new Date(b.requestDate) - new Date(a.requestDate);
+            return new Date(getDate(b.requestDate)) - new Date(getDate(a.requestDate));
           }).map(el => {
              return (
                <LineTransactionOperator data={el} key={el.idPost}/>
@@ -315,7 +316,7 @@ export const ClientCard = ({ isOperator }) => {
           ) : (
             visibleTransactions.filter(el => el.type === 'write-off').sort((a, b) => {
          
-              return new Date(b.requestDate) - new Date(a.requestDate);
+              return new Date(getDate(b.requestDate)) - new Date(getDate(a.requestDate));
             }).map(el => {
                return (
                  <LineTransactionOperator data={el} />
