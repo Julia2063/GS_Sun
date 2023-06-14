@@ -17,8 +17,12 @@ import { ChangeHistory } from "./pages/ChangeHistory";
 import Content from "./pages/Content";
 
 export const getDate = (date: string) => {
-  const year = date.split(' ');
+  if (date.length < 25) {
+    const year = date.split(' ');
   return `${year[0]} ${year[1].split('.').reverse().join('/')}`
+  } else {
+    return date;
+  }
 };
 
 function App() {

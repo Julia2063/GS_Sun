@@ -333,8 +333,8 @@ export const ClientCard = ({ isOperator }) => {
           ? (
             [...clientRequests, ...clientTransactions].sort((a, b) => {
          
-            return new Date(b.requestDate) - new Date(a.requestDate);
-          }).map(el => {
+              return new Date(getDate(b.requestDate)) - new Date(getDate(a.requestDate));
+            }).map(el => {
              return (
                <LineTransaction data={el} isRequest={Object.values(el).length === 6 || Object.values(el).length === 7} />
              )
@@ -343,7 +343,7 @@ export const ClientCard = ({ isOperator }) => {
           ) : (
             visibleTransactions.sort((a, b) => {
          
-              return new Date(b.requestDate) - new Date(a.requestDate);
+              return new Date(getDate(b.requestDate)) - new Date(getDate(a.requestDate));
             }).map(el => {
                return (
                  <LineTransaction data={el} isRequest={Object.values(el).length === 6 || Object.values(el).length === 7} />
