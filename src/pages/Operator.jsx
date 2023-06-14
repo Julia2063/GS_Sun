@@ -8,6 +8,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { QrReader } from 'react-qr-reader';
 
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from "../firebase";
+
 export default function Operator() {
   const [searchQuery, setSearchQuery] = useState('');
   const [prices, setPrices] = useState({});
@@ -15,14 +18,21 @@ export default function Operator() {
   const [isCamera, setIsCamera] = useState(false);
   const [data, setData] = useState('No result');
 
+  const { location, user, setLocation } = useContext(AppContext);
 
-  const { location, user } = useContext(AppContext);
+  useEffect(() => {
+    
+    onSnapshot(doc(db, "locations", location.idPost), (doc) => {
+    setLocation({...location, ...doc.data()});
+    });
+    
+  }, []);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     setPrices(location?.prices);
-  }, []);
+  }, [location]);
 
   useEffect(() => {
     if(isCamera) {
@@ -57,6 +67,7 @@ export default function Operator() {
     };
   };
 
+  console.log(prices, location)
 
   return (
     <div className="p-10 flex gap-[24px]">
@@ -166,7 +177,7 @@ export default function Operator() {
                         onFocus={() => setIsPricesChange(true)}
                         onChange={(e) => handleDiscountChange(e, el[0])}
                         type='number'
-                        step="any"
+                        step="0.01"
                       />
                       грн/литр
                     </div>

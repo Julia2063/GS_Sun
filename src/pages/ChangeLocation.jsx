@@ -3,37 +3,20 @@ import React, { useState, useContext,  useEffect } from "react";
 import { Divider } from "../components/Divider";
 import { Button } from "../components/Button";
 import { AppContext } from "../components/AppProvider";
-import { getCollection } from "../helpers/firebaseControl";
 import { useNavigate } from "react-router";
 
 export default function ChangeLocation() {
-  const { setLocation, userRole } = useContext(AppContext);
+  const { setLocation, locations } = useContext(AppContext);
 
-  const [locations, setLocations] = useState([]);
+  
   const [currentLocation, setCurrentLocation] = useState({});
   const navigate = useNavigate();
-
-  const fetchData = async () => {
-    try {
-      const loadedData = 
-        await getCollection('locations');
-      setLocations(loadedData);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   useEffect(() => {
     const findLoc = locations.find(el => el.id === currentLocation);
     if(findLoc) {
       setLocation(findLoc);
       navigate('/operator');
-     
-      
     };
     
   }, [currentLocation]);
@@ -62,7 +45,7 @@ export default function ChangeLocation() {
           <option value="" className="text-gray-400 disabled hidden">
             обрати
           </option>
-          {locations.map(el => {
+          {locations.sort((a, b) => a.id - b.id).map(el => {
             return (
                 <option key={el.id}  value={el.id}>{`№${el.id}, ${el.adress}`}</option>
             )

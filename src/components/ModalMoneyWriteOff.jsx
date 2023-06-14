@@ -19,10 +19,13 @@ export const ModalMoneyWriteOff = ({ isOpen, closeModal, client }) => {
 
     const { location } = useContext(AppContext);
 
+    
     useEffect(() => {
+      console.log()
       setInfo({...info, location: `№${location.id}, ${location.adress}`});
     }, []);
 
+    console.log(info);
     const handleChange = (e) => {
       setSum(+e.target.value);
     };
@@ -166,7 +169,9 @@ export const ModalMoneyWriteOff = ({ isOpen, closeModal, client }) => {
                   step="any"
                   className="w-full h-[36px] rounded border-[#E9E9E9] border pl-3 mt-2"
                   value={info.litrs}
-                  onChange={(e) =>handleChangeLitrs(e)} />
+                  onChange={(e) =>handleChangeLitrs(e)}
+                  disabled={info.fuelType.length === 0}
+                />
 
               </div>
           </label>
@@ -185,7 +190,9 @@ export const ModalMoneyWriteOff = ({ isOpen, closeModal, client }) => {
                   step="any"
                   className="w-full h-[36px] rounded border-[#E9E9E9] border pl-3 mt-2"
                   value={sum}
-                  onChange={(e) => handleChange(e)} />
+                  onChange={(e) => handleChange(e)}
+                  disabled={info.fuelType.length === 0}
+                />
 
               </div>
           </label>

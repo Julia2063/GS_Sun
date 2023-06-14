@@ -71,6 +71,7 @@ export const AppProvider = ({ children }) => {
               console.log(snapshot.docs);
               setClients(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
             });
+              fetchLocations();
               navigate("/changeLocation");
               return;
 

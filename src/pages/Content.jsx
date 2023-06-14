@@ -20,7 +20,6 @@ export default function Content() {
       setLocation(findLoc);
        setPrices(findLoc?.prices);
     }
-     
   }, [location]);
 
   

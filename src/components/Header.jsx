@@ -17,8 +17,6 @@ export default function Header() {
 
   const { user, userRole } = useContext(AppContext);
 
-  console.log(userRole);
-
   const getRole = () => {
     switch (userRole) {
       case "accountant": 

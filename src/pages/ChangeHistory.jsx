@@ -49,7 +49,7 @@ export const ChangeHistory = () => {
               return new Date(getDate(b.changeDate)) - new Date(getDate( a.changeDate));
             }).map(el => {
                 return (
-                    <LineChange data={el}/>
+                    <LineChange data={el} key={el.idPost}/>
                 )
             })}
             </div>
