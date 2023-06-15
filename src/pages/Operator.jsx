@@ -21,10 +21,11 @@ export default function Operator() {
   const { location, user, setLocation } = useContext(AppContext);
 
   useEffect(() => {
-    
-    onSnapshot(doc(db, "locations", location.idPost), (doc) => {
-    setLocation({...location, ...doc.data()});
+    if(Object.values(location).length > 0) {
+      onSnapshot(doc(db, "locations", location.idPost), (doc) => {
+      setLocation({...location, ...doc.data()});
     });
+    }
     
   }, []);
 

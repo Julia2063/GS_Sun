@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { ModalAddPromotion } from "../components/ModalAddPromotion";
 import { LinePromotion } from "../components/LinePromotion";
+import { getDate } from "date-fns";
 
 export default function Content() {
   const [prices, setPrices] = useState({});
@@ -33,8 +34,6 @@ export default function Content() {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     setPrices(location?.prices);
@@ -80,7 +79,7 @@ export default function Content() {
         <div className="py-[24px] border-b-2  border-l-2 border-r-2 border-['#E9E9E9'] rounded-b-[4px] bg-[#FAFAFA] flex flex-col gap-[24px]">
            {promotions.sort((a, b) => {
          
-         return new Date(a.changeDate) - new Date(b.changeDate);
+         return new Date(getDate(b.changeDate) ) - new Date(getDate(a.changeDate));
        }).map(el => {
           return (
             <LinePromotion data={el} />

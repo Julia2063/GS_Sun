@@ -2,15 +2,15 @@ import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import ReactInputMask from "react-input-mask";
 import { toast } from "react-toastify";
-import { createNewPromotion, deleteImageFromStorage, updateDocumentInCollection, uploadFileToStoragesFolder } from "../helpers/firebaseControl";
+import { createNewPromotion, deleteImageFromStorage, updateDocumentInCollection, uploadFileToStorage, uploadFileToStoragesFolder } from "../helpers/firebaseControl";
 import { BigButton } from "./BigButton";
 
 
 
 export const ModalAddPromotion = ({ isOpen, closeModal, update, data }) => {
-  const [files, setFiles] = useState([]);
+  const [file, setFile] = useState(null);
   const [formData, setFormData] = useState({
-    images: [],
+    image: '',
     title: '',
     promotionDate: '',
     text: '',
@@ -41,28 +41,44 @@ export const ModalAddPromotion = ({ isOpen, closeModal, update, data }) => {
 
   const handleChangePhoto = (e) => {
     if (e.target.files[0]) {
-      setFiles([...files, e.target.files[0]] );
+      setFile(e.target.files[0]);
       const reader = new FileReader();
 
       reader.onloadend = () => {
-        setFormData({...formData, images: [...formData.images, reader.result] });
+        setFormData({...formData, image: reader.result });
       };
     
       reader.readAsDataURL(e.target.files[0]);
     }
   };
 
-  const handleDeletePhoto = (ind) => {
-    const newImages = formData.images.filter((e, i) => i !== ind);
-    setFormData({...formData, images: newImages });
-    const newFiles = files.filter((e, i) => i !==ind);
-    setFiles(newFiles);
+  const handleDeletePhoto = () => {
+    setFile(null);
+    setFormData({...formData,  image: ''});
+  };
+
+  const validateDate = (data) => {
+    const arr = data.split('.');
+    if(+arr[0] > 31 || +arr[1] > 12 || new Date(arr.reverse().join('/')) < new Date()) {
+      return false;
+    };
+
+    return true;
   };
   
 
   const handleSubmit = update ? (
     async (e) => {
       e.preventDefault();    
+
+      if(!validateDate(formData.promotionDate)) {
+        toast.error("Неприпустима дата закінчення акції")
+        return;
+      };
+      if(!file) {
+        toast.error("Додайте картинку")
+        return;
+      };
    
       const oldData = Object.values({
         title: data.title,
@@ -96,45 +112,43 @@ export const ModalAddPromotion = ({ isOpen, closeModal, update, data }) => {
           console.log(error);
           toast.info("Заявку відхилено")
         }
-      }
-
-
-      if (files.length > 0 || data.images.length !== formData.images.length) {
+      };
+      if (file) {
         try {
-          const restedImages = data.images.filter(el => formData.images.includes(el));
- 
-          const deletedImages = data.images.filter(el => !formData.images.includes(el));
-
-          if (deletedImages.length > 0) {
-            deletedImages.forEach(el => deleteImageFromStorage(el, data.idPost, restedImages));
-          }
-          if (restedImages.length > 0) {
-            await uploadFileToStoragesFolder(files, data, restedImages);
-          }
-          
+          uploadFileToStorage(file, data.id, data.idPost);
 
         } catch (error) {
           console.log(error);
           toast.info("Заявку відхилено")
         }
-      }
+      };
+
       toast.success("Акцію успішно оновлено")
       setFormData({
-        images: [],
+        image: '',
         title: '',
         promotionDate: '',
         text: '',
         isTop: false,
       })
-      setFiles([]);
+      setFile('');
       closeModal();
     })
     : (
       async (e) => {
         e.preventDefault(); 
+        if(!validateDate(formData.promotionDate)) {
+          toast.error("Неприпустима дата закінчення акції")
+          return;
+        };
+        if(!file) {
+          toast.error("Додайте картинку")
+          return;
+        };
+
         try {
          
-          createNewPromotion(formData, files);
+          createNewPromotion(formData, file);
       
           toast.success("Акцію успішно додано")
         } catch (error) {
@@ -142,13 +156,13 @@ export const ModalAddPromotion = ({ isOpen, closeModal, update, data }) => {
           toast.info("Заявку відхилено")
         }
         setFormData({
-          images: [],
+          image: '',
           title: '',
           promotionDate: '',
           text: '',
           isTop: false,
         })
-        setFiles([]);
+        setFile('');
         closeModal();
       }
     );
@@ -158,7 +172,7 @@ export const ModalAddPromotion = ({ isOpen, closeModal, update, data }) => {
       isOpen={isOpen}
       onRequestClose={closeModal}
       shouldCloseOnOverlayClick={false}
-      className="absolute left-1/2 transform -translate-x-1/2  bg-[#FAFAFA] w-[688px] h-full rounded-lg shadow-md p-8 overflow-y-scroll"
+      className="fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#FAFAFA] w-[688px] h-max rounded-lg shadow-md p-8 "
       overlayClassName="fixed inset-0 bg-black bg-opacity-50"
     >
       <p className="text-2xl font-bold">
@@ -167,43 +181,57 @@ export const ModalAddPromotion = ({ isOpen, closeModal, update, data }) => {
         : 'Нова акція'
       }</p>
       <form onSubmit={(e) => handleSubmit(e)} className="pt-6 flex flex-col gap-[20px] mb-[20px]">
-        {formData.images.length > 0 && (
-          formData.images.map((el, i) => {
-            return (
-              <div className="flex gap-[16px]"  key={el}>
-                <div className="w-[250px] h-[120px] rounded-lg">
-                  <img 
-                    src={el} 
-                    alt="img"
-                    className="w-full h-full rounded-lg object-cover"
-                  />
-                </div>
-                <button 
-                  type="button"
-                  className="h-min text-[#E50404]"
-                  onClick={() => handleDeletePhoto(i)}
-                >
-                  Видалити
-                </button>
+        <div className="flex gap-[16px]">
+          {formData.image?.length > 0 
+          ? (
+            <>
+              <div className="w-[250px] h-[120px] rounded-lg">
+                <img src={formData.image} alt="promotionImage" className="w-full h-full rounded-lg object-cover"/>
               </div>
-              
-            )
-          })
-        ) }
-        <div className="bg-[#E9E9E9] w-[250px] h-[120px] rounded-lg relative">
-          
-          <div  
-            className="text-[30px] text-[#727272] h-[36px] w-[36px] bg-[#fff] relative rounded-full absolute top-[45px] left-[110px] cursor-pointer" 
-          >
-          <p className="absolute top-[-7px] left-[8px]">+</p>
+              <div className="flex flex-col gap-[10px]">
+                <p className="font-bold">Редагувати фото</p>
+                <div className="flex gap-[16px]">
+                  <button 
+                    className="text-[14px] text-[#E50404]"
+                    onClick={handleDeletePhoto}
+                    type="button"
+                  >
+                    Видалити
+                  </button>
+                  <label 
+                    className="text-[14px] text-[#369FFF] relative cursor-pointer"
+                    type="button"
+                  >
+                    Змінити
+                    <input
+                  type="file"
+                  className=" opacity-0 h-[36px] w-[50px] absolute"
+                  onChange={(e) => handleChangePhoto(e)} 
+                />
+                  </label>
+                </div>
+              </div>
+            </>
+            
+          ) : (
+           <div className="bg-[#E9E9E9] w-[250px] h-[120px] rounded-lg relative">
+         
+            
+             <div
+                className="text-[30px] text-[#727272] h-[36px] w-[36px] bg-[#fff] relative rounded-full absolute top-[45px] left-[110px] cursor-pointer"
+              >
+                <p className="absolute top-[-7px] left-[8px]">+</p>
+              </div>
+              <input
+                  type="file"
+                  className="cursor-pointer opacity-0 h-[36px] w-[36px] absolute top-[45px] left-[110px] "
+                  onChange={(e) => handleChangePhoto(e)} 
+                />
           </div>
-
-          <input
-            type="file"
-            className="cursor-pointer opacity-0 h-[36px] w-[36px] absolute top-[45px] left-[110px] "
-            onChange={(e) => handleChangePhoto(e)}
-          />
+          )}
+          
         </div>
+        
 
         <label className="flex flex-col gap-[8px]">
             <span className="font-bold">Заголовок</span>

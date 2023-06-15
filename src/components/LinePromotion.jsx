@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BigButton } from './BigButton';
-import { deleteObjectFromeStorage, removeDocumentFromCollection } from '../helpers/firebaseControl';
+import { deleteImageFromStorage, deleteObjectFromeStorage, removeDocumentFromCollection } from '../helpers/firebaseControl';
 import { toast } from "react-toastify";
 import { ModalAddPromotion } from './ModalAddPromotion';
 
@@ -18,10 +18,9 @@ export const LinePromotion = ({ data }) => {
   const handlePromotionDelete = async () => {
     try {
       await removeDocumentFromCollection('promotions', data.idPost);
-      if (data.images.length > 0) {
-        await deleteObjectFromeStorage(data);
-        toast.success("Акцію успішно видалено");
-      }
+      await deleteImageFromStorage(data.image);
+      toast.success("Акцію успішно видалено");
+  
     } catch (error) {
       console.log(error);
       toast.info("Заявку на видалення відхилено");
@@ -31,7 +30,7 @@ export const LinePromotion = ({ data }) => {
     return (
       <div className='flex px-[24px] gap-[24px]'>
         <div className='w-1/3'>
-          <img src={data.images[0]} alt="mainImage" className='w-full h-[130px] object-cover rounded-lg'/>
+          <img src={data.image} alt="mainImage" className='w-full h-[130px] object-cover rounded-lg'/>
         </div>
       <div className='w-1/3 flex flex-col gap-[8px]'>
         <p className='text-[18px] font-bold'>{data.title}</p>
