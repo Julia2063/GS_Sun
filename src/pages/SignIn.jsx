@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import {  getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {  getAuth, sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth";
 
 import { toast } from "react-toastify";
 
 import { Divider } from "../components/Divider";
-import { Checkbox } from "../components/Checkbox";
+/* import { Checkbox } from "../components/Checkbox"; */
 import { Button } from "../components/Button";
+import { auth } from "../helpers/firebaseControl";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({
@@ -37,6 +38,22 @@ export default function SignIn() {
     }
   };
 
+  const handleResetPassword = () => {
+    if (formData.email.length === 0) {
+      toast.error("Введіть свій email");
+      return;
+    } else {
+      sendPasswordResetEmail(auth, formData.email)
+        .then(() => {
+          toast.success('Лист для скидання паролю надіслано. Будьласка, перевірте свою поштову скриньку!');
+        })
+        .catch(() => {
+          toast.error("Щось пішло не так...");
+        });
+    }
+   
+  };
+
   
 
   return (
@@ -44,7 +61,7 @@ export default function SignIn() {
       <div className="w-[572px] h-[267px] bg-white">
         <div>
           <div className=" mt-3 mb-3 ml-4">
-            <span className=" text-lg">Вхід</span>
+            <span className="text-lg">Вхід</span>
           </div>
           <Divider />
         </div>
@@ -79,7 +96,14 @@ export default function SignIn() {
               </div>
             </div>
             <div className="pt-[17px] pl-[115px]">
-              <Checkbox label="Запам’ятати мене" />
+              {/* <Checkbox label="Запам’ятати мене" /> */}
+              <button 
+                className="font-bold"
+                type="button"
+                onClick={handleResetPassword}
+              >
+                Забули пароль?
+              </button>
             </div>
             <div className="flex justify-end">
               <Button type="submit" label="Увійти" labelColor="white" />

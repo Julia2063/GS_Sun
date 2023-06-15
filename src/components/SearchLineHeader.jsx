@@ -8,6 +8,7 @@ export const SearchLineHeader = ({
   setSearchQuery,
   title,
   role,
+  setIsChanging
  }) => {
 
   return (
@@ -32,7 +33,10 @@ export const SearchLineHeader = ({
       {role === "employees" && (
         <div>
         <BigButton
-          onClick={onButtonPress}
+          onClick={() => {
+            setIsChanging(false);
+            onButtonPress();
+          }}
           type="button"
           label="+ Додати"
           labelColor="white"

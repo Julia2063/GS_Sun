@@ -18,6 +18,9 @@ export const EmployeeTableHeader = () => {
       <div className="w-1/5">
         <span className=" font-bold text-[#727272]">Роль</span>
       </div>
+      <div className="w-1/12 pr-6 ">
+        <span className=" font-bold text-[#727272]"></span>
+      </div>
     </div>
   );
 };

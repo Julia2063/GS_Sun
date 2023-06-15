@@ -1,7 +1,7 @@
 import React from "react";
 import { Divider } from "./Divider";
 
-export const LineEmployees = ({ data }) => {
+export const LineEmployees = ({ data, openModal, setIsChanging, setCurrentData }) => {
   const { id, name, surname, patronymic, birthDate, phoneNumber, role } =
     data;
 
@@ -57,6 +57,17 @@ export const LineEmployees = ({ data }) => {
             {getRole()}
           </span>
         </div>
+      </div>
+      <div className="w-1/12 text-2xl pr-6">
+        <button
+          onClick={() => {
+            setIsChanging(true);
+            openModal();
+            setCurrentData(data)
+          }}
+        >
+          ...
+        </button>
       </div>
     </div>
   );

@@ -88,6 +88,8 @@ export const AppProvider = ({ children }) => {
               navigate('notEmployees');
               return;
           }
+        }).catch(() => {
+          navigate('notEmployees')
         });
       }
     

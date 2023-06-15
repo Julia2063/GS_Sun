@@ -3,8 +3,6 @@ import { Routes, Route } from "react-router-dom";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-import Home from "./pages/Operator";
 import Clients from "./pages/Clients";
 import Employees from "./pages/Employees";
 import SignIn from "./pages/SignIn";
@@ -15,6 +13,7 @@ import ChangeLocation from "./pages/ChangeLocation";
 import Operator from "./pages/Operator";
 import { ChangeHistory } from "./pages/ChangeHistory";
 import Content from "./pages/Content";
+import { NotEmployees } from "./pages/NotEmployees";
 
 export const getDate = (date: string) => {
   if (date.length < 25) {
@@ -36,7 +35,7 @@ function App() {
         ? <SignIn />
         : (
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="notEmployees" element={<NotEmployees />} />
             {userRole === "accountant" && (
               <>
               <Route path="/clients">

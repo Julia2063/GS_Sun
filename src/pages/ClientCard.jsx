@@ -88,14 +88,34 @@ export const ClientCard = ({ isOperator }) => {
         default:
           return el;
       }
-      
-      });
+    });
   
     setVisibleTransactions(filteredTransactions);
   }, [filter]);
 
   useEffect(() => {
-    const searchResult = [...clientTransactions, ...clientRequests]
+    const searchResult = filter 
+    ? [...clientTransactions, ...clientRequests].filter(el => {
+      switch(filter) {
+        case 'transfer':
+        case 'write-off':
+          return el.type === filter;
+        
+        case 'request':
+          return Object.values(el).length === 6;
+
+        case 'request-rejected':
+
+          return el.reject;
+
+        default:
+          return el;
+      }
+    }).filter(
+      el => `${el.sum}`.includes(searchQuery) 
+      || `${el.requestDate}`.includes(searchQuery)
+    ) 
+    : [...clientTransactions, ...clientRequests]
       .filter(
         el => `${el.sum}`.includes(searchQuery) 
         || `${el.requestDate}`.includes(searchQuery)
@@ -103,7 +123,7 @@ export const ClientCard = ({ isOperator }) => {
     if (searchQuery.length > 0) {
       setVisibleTransactions(searchResult);
     };
-  }, [searchQuery]);
+  }, [searchQuery, filter]);
 
 
   const handleSubmit = async (e) => {
@@ -319,7 +339,7 @@ export const ClientCard = ({ isOperator }) => {
               return new Date(getDate(b.requestDate)) - new Date(getDate(a.requestDate));
             }).map(el => {
                return (
-                 <LineTransactionOperator data={el} />
+                 <LineTransactionOperator data={el} ey={el.idPost}/>
                )
              })
           )}
@@ -350,12 +370,8 @@ export const ClientCard = ({ isOperator }) => {
                )
              })
           )}
-          
         </div>
        )}
-      
-        
-
       </div>
    
       <ModalMoneyTransfer

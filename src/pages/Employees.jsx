@@ -18,12 +18,13 @@ export default function Employees() {
   const [dataToPaginate, setDataToPaginate] = useState([]);
 
   const [searchQuery, setSearchQuery] = useState('');
-
+  const [isChanging, setIsChanging] = useState(false);
+  const [currentData, setCurrentData] = useState(null);
   
 
   useEffect(() => {
     db.collection('employees').onSnapshot(snapshot => {
-      setDataToPaginate(snapshot.docs.map(doc => doc.data()));
+      setDataToPaginate(snapshot.docs.map(doc => ({...doc.data(), idPost: doc.id})));
     });
   }, []);
 
@@ -57,19 +58,41 @@ export default function Employees() {
           setSearchQuery={setSearchQuery}
           title="Співробітники"
           role="employees"
+          setIsChanging={setIsChanging}
         />
         <EmployeeTableHeader />
       {searchQuery.length > 0 
       ? filteredData.map((item) => {
-        return <LineEmployees data={item} key={item.id}/>;
+        return (
+          <LineEmployees 
+            data={item} 
+            key={item.id} 
+            openModal={openModal} 
+            setIsChanging={setIsChanging}
+            setCurrentData={setCurrentData}
+          
+          />
+        )
       })
       : data.map((item) => {
-        return <LineEmployees data={item} key={item.id}/>;
+        return (
+          <LineEmployees 
+            data={item}
+            key={item.id} 
+            openModal={openModal} 
+            setIsChanging={setIsChanging}
+            setCurrentData={setCurrentData}
+            
+          />
+        ) 
       })}
       <Pagination data={dataToPaginate} setData={setData}/>
       <ModalAddEmployee
         isOpen={isModalOpen}
         closeModal={closeModal}
+        isChanging={isChanging}
+        data={currentData}
+        dataToPaginate={dataToPaginate}
       />
     </div>
   );

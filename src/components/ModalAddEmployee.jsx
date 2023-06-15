@@ -1,11 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Modal from "react-modal";
 import ReactInputMask from "react-input-mask";
 import * as yup from "yup";
 
 import { Button } from "./Button";
 import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
-import { secondAuth, createNewEmployee } from "../helpers/firebaseControl";
+import { secondAuth, createNewEmployee, updateDocumentInCollection, removeDocumentFromCollection } from "../helpers/firebaseControl";
 import { toast } from "react-toastify";
 
 const schema = yup.object().shape({
@@ -27,8 +27,9 @@ const schema = yup.object().shape({
   role: yup.string().required("Роль обов'язкова для вибору"),
 });
 
-const ModalAddEmployee = ({ isOpen, closeModal }) => {
+const ModalAddEmployee = ({ isOpen, closeModal, isChanging, data, dataToPaginate }) => {
   const [formErrors, setFormErrors] = useState({});
+  const [isWarning, setIsWarning] = useState(false);
 
   const [formData, setFormData] = useState({
     surname: "",
@@ -61,6 +62,12 @@ const ModalAddEmployee = ({ isOpen, closeModal }) => {
   const passwordRef = useRef(null);
   const roleRef = useRef(null);
 
+  useEffect(() => {
+    if(data) {
+      setFormData(data);
+    }
+  }, [data]);
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevState) => ({
@@ -78,7 +85,7 @@ const ModalAddEmployee = ({ isOpen, closeModal }) => {
     event.preventDefault();
     closeModal();
     setFormData({
-      name: "",
+        name: "",
         surname: "",
         patronymic: "",
         phoneNumber: "",
@@ -90,9 +97,77 @@ const ModalAddEmployee = ({ isOpen, closeModal }) => {
     setFormErrors({});
   };
 
-  
+  const closeWarningModal = () => {
+    setIsWarning(false);
+  };
 
-  const handleSubmit = async (event) => {
+  const handleDelete = async () => {
+    const isAccountant = dataToPaginate.filter(el => el.role === "accountant");
+
+    if(isAccountant.length < 2) {
+      toast.info("Заявку на видалення відхилено. ");
+      setIsWarning(false);
+      return;
+    }
+    try {
+      await removeDocumentFromCollection('employees', data.idPost);
+      toast.success("Спіробітника успішно видалено");
+    } catch (error) {
+      console.log(error);
+      toast.info("Заявку на видалення відхилено");
+    }
+
+    setIsWarning(false);
+    closeModal();
+  };
+
+
+  const handleSubmit = isChanging
+  ? (
+    async (event) => {
+      event.preventDefault();
+      const oldData = Object.values({
+        name: data.name,
+        surname: data.surname,
+        patronymic: data.patronymic,
+        phoneNumber: data.phoneNumber,
+        birthDate: data.birthDate,
+        role: data.role
+      });
+
+      const newData = Object.values({
+        name: formData.name,
+        surname: formData.surname,
+        patronymic: formData.patronymic,
+        phoneNumber: formData.phoneNumber,
+        birthDate: formData.birthDate,
+        role: formData.role
+      });
+
+      if (oldData.some((el, i) => el !== newData[i])) {
+    
+        try {
+        
+          await updateDocumentInCollection('employees', {
+            ...data, 
+            name: formData.name,
+            surname: formData.surname,
+            patronymic: formData.patronymic,
+            phoneNumber: formData.phoneNumber,
+            birthDate: formData.birthDate,
+            role: formData.role
+          }, data.idPost);
+          
+          toast.success("Данні співробітника змінено");
+          closeModal();
+        } catch (error) {
+          console.log(error);
+          toast.info("Заявку відхилено")
+        }
+      };
+    }
+  ) : (
+    async (event) => {
     event.preventDefault();
     try {
       await schema.validate(formData, { abortEarly: false });
@@ -127,17 +202,21 @@ const ModalAddEmployee = ({ isOpen, closeModal }) => {
         setFormErrors(validationErrors);
       }
     }
-  };
+  }); 
+
 
   return (
+    <>
     <Modal
       isOpen={isOpen}
       onRequestClose={closeModal}
       shouldCloseOnOverlayClick={false}
-      className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#FAFAFA] w-[688px] h-[502px] rounded-lg shadow-md p-8"
+      className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#FAFAFA] w-[688px] h-max rounded-lg shadow-md p-8"
       overlayClassName="fixed inset-0 bg-black bg-opacity-50"
     >
-      <p className=" text-2xl">Додати нового співробітника</p>
+      <p className=" text-2xl">
+        {isChanging ? 'Редагувати співробітника' : 'Додати нового співробітника'}
+      </p>
       <form onSubmit={(e) => handleSubmit(e)} className="pt-6">
         <div className="flex flex-row justify-between">
           <label className="flex-col">
@@ -150,8 +229,7 @@ const ModalAddEmployee = ({ isOpen, closeModal }) => {
                 onChange={handleChange}
                 placeholder="Введіть прізвище"
                 className="w-[193px] h-[36px] rounded border-[#E9E9E9] border pl-3 mt-2"
-                ref={surnameRef}
-              />
+                ref={surnameRef} />
               {formErrors.surname && (
                 <div>
                   <span className="text-red-500 text-[8px]">
@@ -172,8 +250,7 @@ const ModalAddEmployee = ({ isOpen, closeModal }) => {
                 onChange={handleChange}
                 placeholder="Введіть ім’я"
                 className="w-[193px] h-[36px] rounded border-[#E9E9E9] border pl-3 mt-2"
-                ref={nameRef}
-              />
+                ref={nameRef} />
               {formErrors.name && (
                 <div>
                   <span className="text-red-500 text-[8px]">
@@ -194,8 +271,7 @@ const ModalAddEmployee = ({ isOpen, closeModal }) => {
                 onChange={handleChange}
                 placeholder="Введіть по-батькові"
                 className="w-[193px] h-[36px] rounded border-[#E9E9E9] border pl-3 mt-2"
-                ref={patronymicRef}
-              />
+                ref={patronymicRef} />
               {formErrors.patronymic && (
                 <div>
                   <span className="text-red-500 text-[8px]">
@@ -220,8 +296,7 @@ const ModalAddEmployee = ({ isOpen, closeModal }) => {
                 onChange={handleChange}
                 placeholder="+38 (0 _ _ )  _ _ _  _ _  _ _ "
                 className="w-[299px] h-[36px] rounded border-[#E9E9E9] border pl-3 mt-2"
-                inputRef={phoneNumberRef}
-              />
+                inputRef={phoneNumberRef} />
               {formErrors.phoneNumber && (
                 <div>
                   <span className="text-red-500 text-[8px]">
@@ -243,8 +318,7 @@ const ModalAddEmployee = ({ isOpen, closeModal }) => {
                 onChange={handleChange}
                 placeholder="_ _. _ _. _ _ _ _ "
                 className="w-[299px] h-[36px] rounded border-[#E9E9E9] border pl-3 mt-2"
-                inputRef={birthDateRef}
-              />
+                inputRef={birthDateRef} />
               {formErrors.birthDate && (
                 <div>
                   <span className="text-red-500 text-[8px]">
@@ -256,50 +330,51 @@ const ModalAddEmployee = ({ isOpen, closeModal }) => {
           </label>
         </div>
 
-        <div className="flex flex-row justify-between pt-4">
-          <label className="flex-col">
-            <span>Email</span>
-            <div>
-              <input
-                type="email"
-                name="email"
-                value={email}
-                onChange={handleChange}
-                placeholder="Введіть адресу"
-                className="w-[299px] h-[36px] rounded border-[#E9E9E9] border pl-3 mt-2"
-                ref={emailRef}
-              />
-              {formErrors.email && (
-                <div>
-                  <span className="text-red-500 text-[8px]">
-                    {formErrors.email}
-                  </span>
-                </div>
-              )}
-            </div>
-          </label>
-          <label className="flex-col">
-            <span>Пароль</span>
-            <div>
-              <input
-                name="password"
-                type="password"
-                value={password}
-                onChange={handleChange}
-                placeholder="Пароль"
-                className="w-[299px] h-[36px] rounded border-[#E9E9E9] border pl-3 mt-2"
-                ref={passwordRef}
-              />
-              {formErrors.password && (
-                <div>
-                  <span className="text-red-500 text-[8px]">
-                    {formErrors.password}
-                  </span>
-                </div>
-              )}
-            </div>
-          </label>
-        </div>
+        {!isChanging && (
+          <div className="flex flex-row justify-between pt-4">
+            <label className="flex-col">
+              <span>Email</span>
+              <div>
+                <input
+                  type="email"
+                  name="email"
+                  value={email}
+                  onChange={handleChange}
+                  placeholder="Введіть адресу"
+                  className="w-[299px] h-[36px] rounded border-[#E9E9E9] border pl-3 mt-2"
+                  ref={emailRef} />
+                {formErrors.email && (
+                  <div>
+                    <span className="text-red-500 text-[8px]">
+                      {formErrors.email}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </label>
+            <label className="flex-col">
+              <span>Пароль</span>
+              <div>
+                <input
+                  name="password"
+                  type="password"
+                  value={password}
+                  onChange={handleChange}
+                  placeholder="Пароль"
+                  className="w-[299px] h-[36px] rounded border-[#E9E9E9] border pl-3 mt-2"
+                  ref={passwordRef} />
+                {formErrors.password && (
+                  <div>
+                    <span className="text-red-500 text-[8px]">
+                      {formErrors.password}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </label>
+          </div>
+        )}
+
 
         <div className="pt-4 mb-6 ">
           <label className="flex-col relative">
@@ -318,7 +393,7 @@ const ModalAddEmployee = ({ isOpen, closeModal }) => {
               <option value="Оператор">Оператор</option>
               <option value="Бухгалтер">Бухгалтер</option>
               <option value="Контент-менеджер">Контент-менеджер</option>
-              
+
             </select>
             <span className="absolute right-2 bottom-[3px] transform rotate-180">
               <svg
@@ -330,8 +405,7 @@ const ModalAddEmployee = ({ isOpen, closeModal }) => {
                 <path
                   fillRule="evenodd"
                   d="M7.293 7.707a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L10 10.414l-3.293 3.293a1 1 0 1 1-1.414-1.414l4-4z"
-                  clipRule="evenodd"
-                />
+                  clipRule="evenodd" />
               </svg>
             </span>
           </label>
@@ -342,15 +416,42 @@ const ModalAddEmployee = ({ isOpen, closeModal }) => {
           )}
         </div>
         <div className="flex flex-row justify-between">
-          <button onClick={handleClose}>
+          <button onClick={handleClose} type="button">
             <span className="text-[#DC0000] text-sm">Скасувати</span>
           </button>
+
           <div className="flex justify-end">
-            <Button type="submit" label="Додати" labelColor="white" />
+            <div className="flex gap-[20px]">
+              {isChanging &&
+              <button 
+                type="button"
+                onClick={() => setIsWarning(true)}
+              >
+                Видалити
+              </button>}
+              <Button type="submit" label={isChanging ? "Змінити" : "Додати"} labelColor="white" />
+            </div>
           </div>
         </div>
       </form>
     </Modal>
+    <Modal
+      isOpen={isWarning}
+      onRequestClose={closeWarningModal}
+      shouldCloseOnOverlayClick={true}
+      className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#FAFAFA] w-[688px] h-max rounded-lg shadow-md p-8 flex flex-col items-center gap-[30px] z-100"
+      overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+    >
+      <div className="font-bold">Ви підтверджуєте видалення співробітника?</div>
+      <button 
+        type="button" 
+        className="w-max px-[20px] h-[30px] bg-[red] rounded-lg fonf-bold text-[#fff]"
+        onClick={handleDelete}
+      >
+        ТАК
+      </button>
+      </Modal>
+    </>
   );
 };
 
