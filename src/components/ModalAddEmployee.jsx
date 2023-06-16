@@ -217,8 +217,9 @@ const ModalAddEmployee = ({ isOpen, closeModal, isChanging, data, dataToPaginate
           signOut(secondAuth);
           toast.success("Нового співробітника успішно додано")
         })
-        .catch((error) => {
-           console.log(error);
+        .catch((er) => {
+           console.log(er);
+           toast.error(`Не вдалося додати нового співробітника, ${er}`)
         });;
       closeModal();
       setFormData({
@@ -240,6 +241,7 @@ const ModalAddEmployee = ({ isOpen, closeModal, isChanging, data, dataToPaginate
         });
         setFormErrors(validationErrors);
       }
+      toast.error(`Не вдалося додати нового співробітника, ${error}`)
     }
   }); 
   
