@@ -179,6 +179,7 @@ export default function Operator() {
                         onChange={(e) => handleDiscountChange(e, el[0])}
                         type='number'
                         step="0.01"
+                        min='0'
                       />
                       грн/литр
                     </div>

@@ -17,6 +17,10 @@ export const ModalMoneyTransfer = ({ isOpen, closeModal, client, isGeneralPage, 
 
     const handleSubmit = async (e) => {
       e.preventDefault();
+      if (sum === 0) {
+        toast.info("Сума зарахування не може дорівнювати 0");
+        return;
+      };
       try {
         await updateFieldInDocumentInCollection('users', client.id, 'balance', (+client.balance + sum));
         await createNewTransaction('transfer', client.clientNumber, sum);
@@ -76,11 +80,11 @@ export const ModalMoneyTransfer = ({ isOpen, closeModal, client, isGeneralPage, 
             <div>
               <input
                 type='number'
-                step="any"
+                step="0.01"
                 className="w-[299px] h-[36px] rounded border-[#E9E9E9] border pl-3 mt-2"
                 value={sum}
                 onChange={(e) => handleChange(e)}
-                
+                min='0'
                 autoFocus={true}
               />
               

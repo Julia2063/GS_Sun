@@ -27,20 +27,17 @@ export const ModalMoneyWriteOff = ({ isOpen, closeModal, client }) => {
 
     console.log(info);
     const handleChange = (e) => {
-      setSum(+e.target.value);
+      setSum(+e.target.value === "-" ? 0 : +e.target.value);
     };
 
-
-
     const handleChangeLitrs = (e) => {
-      setInfo({ ...info, litrs: e.target.value });
-      console.log((+e.target.value * location.prices[info.fuelType]))
-      
+
+      setInfo({ ...info, litrs: +e.target.value === '-' ? '0' : +e.target.value});
     };
 
     useEffect(() => {
       if(operationType === "litrs" && info.fuelType.length > 0) {
-        setSum((info.litrs * (location.prices[info.fuelType] - client?.discount[info.fuelType])));
+        setSum(+((info.litrs * (location.prices[info.fuelType] - client?.discount[info.fuelType])).toFixed(2)));
       }
     }, [info.litrs, info.fuelType]);
 
@@ -77,7 +74,13 @@ export const ModalMoneyWriteOff = ({ isOpen, closeModal, client }) => {
       if (sum > client.balance) {
         toast.info("Заявку відхилено - недостатньо коштів");
         return;
-      }
+      };
+
+      if (sum === 0) {
+        toast.info("Сума списання не може дорівнювати 0");
+        return;
+      };
+
       try {
         await updateFieldInDocumentInCollection('users', client.id, 'balance', (+(+client.balance - sum).toFixed(2)));
         await createNewTransaction('write-off', client.clientNumber, sum, info);
@@ -166,11 +169,12 @@ export const ModalMoneyWriteOff = ({ isOpen, closeModal, client }) => {
               <div>
                 <input
                   type='number'
-                  step="any"
+                  step="0.01"
                   className="w-full h-[36px] rounded border-[#E9E9E9] border pl-3 mt-2"
                   value={info.litrs}
                   onChange={(e) =>handleChangeLitrs(e)}
                   disabled={info.fuelType.length === 0}
+                  min='0'
                 />
 
               </div>
@@ -187,11 +191,12 @@ export const ModalMoneyWriteOff = ({ isOpen, closeModal, client }) => {
               <div>
                 <input
                   type='number'
-                  step="any"
+                  step="0.01"
                   className="w-full h-[36px] rounded border-[#E9E9E9] border pl-3 mt-2"
                   value={sum}
                   onChange={(e) => handleChange(e)}
                   disabled={info.fuelType.length === 0}
+                  min='0'
                 />
 
               </div>

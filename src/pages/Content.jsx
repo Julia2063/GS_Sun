@@ -174,7 +174,8 @@ export default function Content() {
                         onFocus={() => setIsPricesChange(true)}
                         onChange={(e) => handleDiscountChange(e, el[0])}
                         type='number'
-                        step="any"
+                        step="0.01"
+                        min="0"
                       />
                       грн/литр
                     </div>

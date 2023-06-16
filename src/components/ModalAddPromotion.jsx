@@ -75,7 +75,7 @@ export const ModalAddPromotion = ({ isOpen, closeModal, update, data }) => {
         toast.error("Неприпустима дата закінчення акції")
         return;
       };
-      if(!file) {
+      if(!file && formData.image.length === 0) {
         toast.error("Додайте картинку")
         return;
       };
@@ -112,6 +112,16 @@ export const ModalAddPromotion = ({ isOpen, closeModal, update, data }) => {
           console.log(error);
           toast.info("Заявку відхилено")
         }
+      } else {
+        setFormData({
+          image: '',
+          title: '',
+          promotionDate: '',
+          text: '',
+          isTop: false,
+        });
+        closeModal();
+        return;
       };
       if (file) {
         try {
