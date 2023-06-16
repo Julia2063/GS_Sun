@@ -3,7 +3,10 @@ import Modal from "react-modal";
 import { BigButton } from "./BigButton";
 
 import { toast } from "react-toastify";
-import { createNewTransaction, updateFieldInDocumentInCollection } from '../helpers/firebaseControl';
+import { createNewTransaction, deleteImageFromStorage, downloadReciept, updateFieldInDocumentInCollection } from '../helpers/firebaseControl';
+import {format} from 'date-fns';
+
+import Download from '../assets/images/download.svg';
 
 export const ModalMoneyTransfer = ({ isOpen, closeModal, client, isGeneralPage, data }) => {
     const [sum, setSum] = useState(0);
@@ -12,7 +15,6 @@ export const ModalMoneyTransfer = ({ isOpen, closeModal, client, isGeneralPage, 
       setSum(+e.target.value);
     };
 
-    
     const handleSubmit = async (e) => {
       e.preventDefault();
       try {
@@ -20,6 +22,8 @@ export const ModalMoneyTransfer = ({ isOpen, closeModal, client, isGeneralPage, 
         await createNewTransaction('transfer', client.clientNumber, sum);
         if (isGeneralPage) {
           await updateFieldInDocumentInCollection('requests', data.id, 'active', false);
+          await deleteImageFromStorage(data.url);
+          await updateFieldInDocumentInCollection('requests', data.id, 'url', '');
         }
         setSum(0);
         toast.success("Кошти успішно зараховано")
@@ -31,7 +35,6 @@ export const ModalMoneyTransfer = ({ isOpen, closeModal, client, isGeneralPage, 
      
       closeModal();
     };
-   
 
     return (
       <Modal
@@ -43,9 +46,29 @@ export const ModalMoneyTransfer = ({ isOpen, closeModal, client, isGeneralPage, 
         autoFocus={false}
     > 
       {isGeneralPage && 
-        <p className="font-bold text-2xl">{`${client?.lastname} ${client?.name} #${client?.clientNumber}`}</p>
+        <p className="font-bold text-2xl">
+          {`${client?.lastname} ${client?.name} #${client?.clientNumber}`}
+          
+        </p>
       } 
         <p className="font-semibold text-2xl">Зарахування коштів</p>
+        {isGeneralPage && (
+          <div className='flex flex-col gap-[10px]'>
+          <p className='mt-[10px] bg-[#F8C9C9] w-max mx-auto px-[20px] h-[40px] leading-[40px] rounded-lg'>
+            При зарахуванні коштів квітанцію буде видалено !
+          </p>
+          <button 
+            className="w-[200px] mx-auto flex items-center gap-[10px]"
+            onClick={() => downloadReciept(data.url, format(new Date(data?.requestDate), 'dd.MM.yyyy'))}
+            type='button'
+          >
+            
+            <p className='underline'>Завантажити квітанцію</p>
+            <img src={Download} alt='download' className='w-4 h-4' />
+             
+          </button>
+          </div>
+        )} 
       <form className="pt-6 flex flex-col gap-10" onSubmit={(e) => handleSubmit(e)}>
         <div className="flex flex-row justify-between gap-4">
           <label className="flex-col">

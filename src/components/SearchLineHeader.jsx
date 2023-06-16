@@ -8,7 +8,8 @@ export const SearchLineHeader = ({
   setSearchQuery,
   title,
   role,
-  setIsChanging
+  setIsChanging,
+  setCurrentData
  }) => {
 
   return (
@@ -35,6 +36,7 @@ export const SearchLineHeader = ({
         <BigButton
           onClick={() => {
             setIsChanging(false);
+            setCurrentData(null);
             onButtonPress();
           }}
           type="button"

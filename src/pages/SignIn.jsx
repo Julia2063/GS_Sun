@@ -6,13 +6,14 @@ import { toast } from "react-toastify";
 import { Divider } from "../components/Divider";
 /* import { Checkbox } from "../components/Checkbox"; */
 import { Button } from "../components/Button";
-import { auth } from "../helpers/firebaseControl";
+import { auth, getCollectionWhereKeyValue, updateFieldInDocumentInCollection } from "../helpers/firebaseControl";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const [isPasswordChanging, setIsPasswordChanging] = useState(false);
 
   const { email, password } = formData;
 
@@ -26,6 +27,17 @@ export default function SignIn() {
   async function onSubmit(e) {
     e.preventDefault();
     try {
+      if(isPasswordChanging) {
+        const changindUser = await getCollectionWhereKeyValue('employees', 'email', formData.email);
+        
+        if(changindUser[0]) {
+          
+          await updateFieldInDocumentInCollection('employees', changindUser[0].idPost, 'password', formData.password);
+          console.log('passwordChang!!');
+        }
+        setIsPasswordChanging(false);
+      };
+      
       const auth = getAuth();
       await signInWithEmailAndPassword(
         auth,
@@ -43,6 +55,7 @@ export default function SignIn() {
       toast.error("Введіть свій email");
       return;
     } else {
+      setIsPasswordChanging(true);
       sendPasswordResetEmail(auth, formData.email)
         .then(() => {
           toast.success('Лист для скидання паролю надіслано. Будьласка, перевірте свою поштову скриньку!');

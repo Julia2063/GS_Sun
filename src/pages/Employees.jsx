@@ -37,7 +37,7 @@ export default function Employees() {
   };
 
   useEffect(() => {
-    const searchResult =  dataToPaginate
+    const searchResult = dataToPaginate
       .filter(
         el => el.name.toLowerCase().includes(searchQuery.toLowerCase()) 
         || el.surname.toLowerCase().includes(searchQuery.toLowerCase())
@@ -59,6 +59,7 @@ export default function Employees() {
           title="Співробітники"
           role="employees"
           setIsChanging={setIsChanging}
+          setCurrentData={setCurrentData}
         />
         <EmployeeTableHeader />
       {searchQuery.length > 0 

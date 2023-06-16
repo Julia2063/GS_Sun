@@ -85,21 +85,6 @@ export function getCollectionWhereKeyValue(collection, key, value) {
   
 
 export function createNewEmployee(uid, regInfo) {
-  const getRole = () => {
-    switch (regInfo.role) {
-      case  "Бухгалтер":
-        return "accountant";
-
-      case  "Оператор":
-        return "operator";
-
-      case  "Контент-менеджер":
-        return "content";
-    
-    default:
-       return "";
-    }
-  }
 
     return new Promise(function (resolve, reject) {
     
@@ -111,8 +96,9 @@ export function createNewEmployee(uid, regInfo) {
         patronymic: regInfo?.patronymic || '',
         phoneNumber: regInfo?.phoneNumber || '',
         birthDate: regInfo?.birthDate || '',
+        password: regInfo.password,
         dateCreating: format(new Date(), 'yyyy-MM-dd HH:mm'),
-        role: getRole(),
+        role: regInfo.role,
         id: Math.floor(Date.now() * Math.random()).toString().slice(0, 5),
       };
       setDocumentToCollection('employees', employee_to_firebase_start).then(r => {

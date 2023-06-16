@@ -4,7 +4,7 @@ import ReactInputMask from "react-input-mask";
 import * as yup from "yup";
 
 import { Button } from "./Button";
-import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, deleteUser, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { secondAuth, createNewEmployee, updateDocumentInCollection, removeDocumentFromCollection } from "../helpers/firebaseControl";
 import { toast } from "react-toastify";
 
@@ -65,7 +65,7 @@ const ModalAddEmployee = ({ isOpen, closeModal, isChanging, data, dataToPaginate
   useEffect(() => {
     if(data) {
       setFormData(data);
-    }
+    };
   }, [data]);
 
   const handleChange = (event) => {
@@ -104,13 +104,35 @@ const ModalAddEmployee = ({ isOpen, closeModal, isChanging, data, dataToPaginate
   const handleDelete = async () => {
     const isAccountant = dataToPaginate.filter(el => el.role === "accountant");
 
-    if(isAccountant.length < 2) {
+    if(isAccountant.length < 2 && data.role === "accountant") {
       toast.info("Заявку на видалення відхилено. ");
       setIsWarning(false);
       return;
     }
     try {
       await removeDocumentFromCollection('employees', data.idPost);
+      await signInWithEmailAndPassword(secondAuth, formData.email, formData.password)
+        .then((userCredential) => {
+          const user = secondAuth.currentUser;
+          deleteUser(user).then(() => {
+            // User deleted.
+          }).catch((er) => {
+            console.log(er);
+          });
+        })
+        .catch((error) => {
+           console.log(error);
+        });
+        setFormData({
+          name: "",
+          surname: "",
+          patronymic: "",
+          phoneNumber: "",
+          birthDate: "",
+          email: "",
+          password: "",
+          role: "",
+      });
       toast.success("Спіробітника успішно видалено");
     } catch (error) {
       console.log(error);
@@ -143,6 +165,12 @@ const ModalAddEmployee = ({ isOpen, closeModal, isChanging, data, dataToPaginate
         birthDate: formData.birthDate,
         role: formData.role
       });
+      const isAccountant = dataToPaginate.filter(el => el.role === "accountant");
+
+      if (data.role !== formData.role && data.role === 'accountant' && isAccountant.length < 2) {
+        toast.info("Заявку на зміни відхилено");
+        return;
+      }
 
       if (oldData.some((el, i) => el !== newData[i])) {
     
@@ -159,12 +187,23 @@ const ModalAddEmployee = ({ isOpen, closeModal, isChanging, data, dataToPaginate
           }, data.idPost);
           
           toast.success("Данні співробітника змінено");
+          setFormData({
+            name: "",
+            surname: "",
+            patronymic: "",
+            phoneNumber: "",
+            birthDate: "",
+            email: "",
+            password: "",
+            role: "",
+          });
           closeModal();
         } catch (error) {
           console.log(error);
           toast.info("Заявку відхилено")
         }
       };
+      closeModal();
     }
   ) : (
     async (event) => {
@@ -203,7 +242,22 @@ const ModalAddEmployee = ({ isOpen, closeModal, isChanging, data, dataToPaginate
       }
     }
   }); 
+  
+  const getRole = () => {
+    switch (data.role) {
+      case  "accountant":
+        return "Бухгалтер";
 
+      case  "operator":
+        return "Оператор";
+
+      case "content" :
+        return "Контент-менеджер";
+    
+    default:
+       return "";
+    }
+  };
 
   return (
     <>
@@ -387,12 +441,12 @@ const ModalAddEmployee = ({ isOpen, closeModal, isChanging, data, dataToPaginate
               className="w-[624px] h-[36px] rounded border-[#E9E9E9] border pl-2 pr-6 mt-2 text-gray-600 appearance-none z-10 relative bg-[transparent]"
               ref={roleRef}
             >
-              <option value="" disabled hidden className="text-gray-400">
-                Оберіть роль
+              <option value="" className="text-gray-400">
+                {data ? getRole() :  'Оберіть роль'} 
               </option>
-              <option value="Оператор">Оператор</option>
-              <option value="Бухгалтер">Бухгалтер</option>
-              <option value="Контент-менеджер">Контент-менеджер</option>
+              <option value="operator" >Оператор</option>
+              <option value="accountant" >Бухгалтер</option>
+              <option value="content">Контент-менеджер</option>
 
             </select>
             <span className="absolute right-2 bottom-[3px] transform rotate-180">

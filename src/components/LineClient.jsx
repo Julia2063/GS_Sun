@@ -1,17 +1,20 @@
 import { useState, useContext } from 'react';
 import Download from '../assets/images/download.svg';
 import Cross from '../assets/images/cross.svg';
-import {format} from 'date-fns';
-import { downloadReciept, updateFieldInDocumentInCollection } from '../helpers/firebaseControl';
+import {format, set} from 'date-fns';
+import { deleteImageFromStorage, downloadReciept, updateFieldInDocumentInCollection } from '../helpers/firebaseControl';
 import { Link } from 'react-router-dom';
 import { BigButton } from './BigButton';
 import { AppContext } from './AppProvider';
 import { ModalMoneyTransfer } from './ModalMoneyTransfer';
 import { toast } from "react-toastify";
+import Modal from "react-modal";
 
 export const LineClient = ({ data, isRequests, name }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isWarning, setIsWarning] = useState(false);
   const [currentClient, setCurrentClient] = useState({});
+  const [clientIsWarning, setClientIsWarning] = useState(false);
 
 
   const { clients } = useContext(AppContext);
@@ -25,16 +28,30 @@ export const LineClient = ({ data, isRequests, name }) => {
     setIsModalOpen(false);
   };
 
+  const closeWarning = () => {
+    setIsWarning(false);
+    setClientIsWarning(true);
+  };
+
+
   const handleReject = async () => {
+    if(!clientIsWarning){
+      setIsWarning(true);
+      return;
+    };
+
     try {
       await updateFieldInDocumentInCollection('requests', data.id, 'reject', true);
       await updateFieldInDocumentInCollection('requests', data.id, 'active', false);
+      await deleteImageFromStorage(data.url);
+        await updateFieldInDocumentInCollection('requests', data.id, 'url', '');
       toast.success("Заявку успішно відхилено");
     } catch (error) {
       console.log(error);
       toast.info("Не вдалося відхилити заявку");
     }
   };
+
 
     return (
       <div
@@ -52,7 +69,7 @@ export const LineClient = ({ data, isRequests, name }) => {
           <span>{isRequests ? name : `${data.lastname} ${data.name} `}</span>
         </Link>
         <div className="w-1/5">
-          <span>{isRequests ? format(new Date(data.requestDate), 'HH:mm:ss dd.MM.yyyy')   : data.birthday}</span>
+          <span>{isRequests ? format(new Date(data.requestDate), 'HH:mm:ss dd.MM.yyyy') : data.birthday}</span>
         </div>
         {!isRequests && (
         <div className="w-1/5">
@@ -115,6 +132,19 @@ export const LineClient = ({ data, isRequests, name }) => {
           client={currentClient}
           isGeneralPage
       />
+
+      <Modal
+        isOpen={isWarning}
+        onRequestClose={closeWarning}
+        shouldCloseOnOverlayClick={true}
+        className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#FAFAFA] w-[688px] h-max rounded-lg shadow-md p-8"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+        autoFocus={false}
+    > 
+    <div>
+      <p>При відхиленні заявки квітанцію буде видалено!</p>
+    </div>
+    </Modal>
       </div>
       
     );

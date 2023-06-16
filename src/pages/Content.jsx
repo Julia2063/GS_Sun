@@ -82,7 +82,7 @@ export default function Content() {
          return new Date(getDate(b.changeDate) ) - new Date(getDate(a.changeDate));
        }).map(el => {
           return (
-            <LinePromotion data={el} />
+            <LinePromotion data={el} key={el.id} />
           )
         })}
         </div>
