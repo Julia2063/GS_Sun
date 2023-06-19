@@ -140,7 +140,7 @@ export function createNewEmployee(uid, regInfo) {
     return result;
   };
 
-  export function createNewTransaction(type, id, sum, info = {}) {
+  export function createNewTransaction(type, id, sum, location, info = {}) {
   
       return new Promise(function (resolve, reject) {
       
@@ -148,7 +148,7 @@ export function createNewEmployee(uid, regInfo) {
           type,
           requestDate: format(new Date(), 'HH:mm:ss dd.MM.yyyy'),
           sum,
-          location: info.location || '',
+          location: `№${location.id}, ${location.adress}` || '',
           fuelType: info.fuelType || '',
           litrs: info.litrs || '',
           userNumber: id,

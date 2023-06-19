@@ -19,12 +19,6 @@ export const ModalMoneyWriteOff = ({ isOpen, closeModal, client }) => {
 
     const { location } = useContext(AppContext);
 
-    
-    useEffect(() => {
-      console.log()
-      setInfo({...info, location: `№${location.id}, ${location.adress}`});
-    }, []);
-
     console.log(info);
     const handleChange = (e) => {
       setSum(+e.target.value === "-" ? 0 : +e.target.value);
@@ -83,7 +77,7 @@ export const ModalMoneyWriteOff = ({ isOpen, closeModal, client }) => {
 
       try {
         await updateFieldInDocumentInCollection('users', client.id, 'balance', (+(+client.balance - sum).toFixed(2)));
-        await createNewTransaction('write-off', client.clientNumber, sum, info);
+        await createNewTransaction('write-off', client.clientNumber, sum, location, info);
         
         setSum(0);
         toast.success("Кошти успішно списано")
