@@ -47,7 +47,7 @@ export const ClientCard = ({ isOperator }) => {
     setClientRequests(allRequests.filter(el => +el.userNumber === +client?.clientNumber));
     db.collection('transactions').onSnapshot(snapshot => {
       setClientTransaction(snapshot.docs.filter(doc => doc.data().userNumber === client?.clientNumber).map(doc => ({...doc.data(), id: doc.id})));
-    })
+    });
     setVisibleTransactions([...clientTransactions, ...clientRequests]);
   }, [client]);
 
@@ -209,13 +209,13 @@ export const ClientCard = ({ isOperator }) => {
                 const getProductName = () => {
                   switch (el[0]) {
                     case '95':
-                      return ['95'];
+                      return ['A95'];
 
                     case 'A-95':
-                      return ['A95', 'Премиум'];
+                      return ['A95', 'Преміум'];
 
                     case 'ДПe':
-                      return ['ДП', 'Премиум'];
+                      return ['ДП', 'Преміум'];
 
                     case 'ДП':
                       return ['ДП'];

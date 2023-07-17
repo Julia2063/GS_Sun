@@ -49,10 +49,10 @@ export const ModalMoneyWriteOff = ({ isOpen, closeModal, client }) => {
           return ['A95'];
 
         case 'A-95':
-          return ['A95', 'Премиум'];
+          return ['A95', 'Преміум'];
 
         case 'ДПe':
-          return ['ДП', 'Премиум'];
+          return ['ДП', 'Преміум'];
 
         case 'ДП':
           return ['ДП'];
@@ -120,7 +120,7 @@ export const ModalMoneyWriteOff = ({ isOpen, closeModal, client }) => {
           <option value="" className="text-gray-400 disabled hidden">
             обрати
           </option>
-          {Object.keys(location.prices).map(el => {
+          {Object.keys(location).length > 0  && Object.keys(location.prices).map(el => {
             return (
                 <option key={el}  value={el}>{getProductName(el)}</option>
             )
