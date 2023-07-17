@@ -6,19 +6,17 @@ export const LineTransactionOperator = ({ data}) => {
   const getProductName = () => {
     switch (data.fuelType) {
       case '95':
-        return ['95', 'Mustang'];
+        return ['A95'];
 
       case 'A-95':
-        return ['A-95', 'Євро5'];
+        return ['A95', 'Премиум'];
 
       case 'ДПe':
-        return ['ДП', 'Євро5'];
+        return ['ДП', 'Премиум'];
 
       case 'ДП':
-        return ['ДП', 'Mustang+'];
+        return ['ДП'];
      
-
-
       default:
         return [data.fuelType, ''] ;
     }

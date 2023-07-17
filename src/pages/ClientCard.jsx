@@ -128,9 +128,14 @@ export const ClientCard = ({ isOperator }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     try { 
-      await updateFieldInDocumentInCollection('users', client.id, 'discount', discount);
-      toast.success("Знижка успішно змінена")
+      if(isDiscountChange) {
+        await updateFieldInDocumentInCollection('users', client.id, 'discount', discount);
+        toast.success("Знижка успішно змінена");
+        setIsDiscountChange(false);
+      }
+      
     } catch (error) {
       console.log(error);
       toast.info("Заявку відхилено")
@@ -204,18 +209,16 @@ export const ClientCard = ({ isOperator }) => {
                 const getProductName = () => {
                   switch (el[0]) {
                     case '95':
-                      return ['95', 'Mustang'];
+                      return ['95'];
 
                     case 'A-95':
-                      return ['A-95', 'Євро5'];
+                      return ['A95', 'Премиум'];
 
                     case 'ДПe':
-                      return ['ДП', 'Євро5'];
+                      return ['ДП', 'Премиум'];
 
                     case 'ДП':
-                      return ['ДП', 'Mustang+'];
-
-
+                      return ['ДП'];
 
                     default:
                       return [el[0], ''];

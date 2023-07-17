@@ -59,9 +59,13 @@ export default function Operator() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try { 
-      await createNewPriceChange(location.id, location.prices, prices, user.uid);
+      if(isPricesChange) {
+        await createNewPriceChange(location.id, location.prices, prices, user.uid);
       await updateFieldInDocumentInCollection('locations', location.idPost, 'prices', prices);
-      toast.success("Ціна успішно змінена")
+      toast.success("Ціна успішно змінена");
+      setIsPricesChange(false);
+      }
+      
     } catch (error) {
       console.log(error);
       toast.info("Заявку відхилено")
@@ -137,7 +141,6 @@ export default function Operator() {
                 <div className="flex justify-between w-full">
                   <div>Локація</div>
                   <div className="text-[14px] flex gap-[10px]">
-                    <span className="text-[#00B488]">{`АЗС №${location.id}`}</span>
                     <span>{location.adress}</span>
                   </div>
                   
@@ -148,16 +151,16 @@ export default function Operator() {
                 const getProductName = () => {
                   switch (el[0]) {
                     case '95':
-                      return ['95', 'Mustang'];
+                      return ['A95'];
 
                     case 'A-95':
-                      return ['A-95', 'Євро5'];
+                      return ['A95', 'Премиум'];
 
                     case 'ДПe':
-                      return ['ДП', 'Євро5'];
+                      return ['ДП', 'Премиум'];
 
                     case 'ДП':
-                      return ['ДП', 'Mustang+'];
+                      return ['ДП'];
                    
 
 

@@ -50,18 +50,16 @@ export const LineTransaction = ({ data, isRequest }) => {
   const getProductName = () => {
     switch (data.fuelType) {
       case '95':
-        return ['95', 'Mustang'];
+        return ['A95'];
 
       case 'A-95':
-        return ['A-95', 'Євро5'];
+        return ['A95', 'Премиум'];
 
       case 'ДПe':
-        return ['ДП', 'Євро5'];
+        return ['ДП', 'Премиум'];
 
       case 'ДП':
-        return ['ДП', 'Mustang+'];
-     
-
+        return ['ДП'];
 
       default:
         return [data.fuelType, ''] ;
@@ -86,7 +84,7 @@ export const LineTransaction = ({ data, isRequest }) => {
         <span className=' whitespace-nowrap '>{isRequest ? '' : data.location}</span>
       </div>
       <div className="w-1/6">
-        <span>{isRequest ? '' : `${getProductName()[0]} ${getProductName()[1]}`}</span>
+        <span>{isRequest ? '' : `${getProductName()[0]} ${getProductName()[1] || ''}`}</span>
       </div>
       <div className="w-1/6">
         <span>{isRequest ? '' : `${data.sum} грн`}</span>

@@ -7,6 +7,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { ModalAddPromotion } from "../components/ModalAddPromotion";
 import { LinePromotion } from "../components/LinePromotion";
 import { getDate } from "date-fns";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "../firebase";
 
 export default function Content() {
   const [prices, setPrices] = useState({});
@@ -14,12 +16,21 @@ export default function Content() {
   const { location, user, setLocation, locations, promotions } = useContext(AppContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  useEffect(() => {
+    if(Object.values(location).length > 0) {
+      onSnapshot(doc(db, "locations", location.idPost), (doc) => {
+      setLocation({...location, ...doc.data()});
+    });
+    }
+    
+  }, []);
+
 
   useEffect(() => {
     const findLoc = locations.find(el => el.id === location);
     if(findLoc) {
       setLocation(findLoc);
-       setPrices(findLoc?.prices);
+      setPrices(findLoc?.prices);
     }
   }, [location]);
 
@@ -37,7 +48,7 @@ export default function Content() {
 
   useEffect(() => {
     setPrices(location?.prices);
-  }, []);
+  }, [location]);
 
 
   const handleDiscountChange = (e, el) => {
@@ -48,9 +59,13 @@ export default function Content() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try { 
-      await createNewPriceChange(location.id, location.prices, prices, user.uid);
-      await updateFieldInDocumentInCollection('locations', location.idPost, 'prices', prices);
-      toast.success("Ціна успішно змінена")
+      if(isPricesChange) {
+        await createNewPriceChange(location.id, location.prices, prices, user.uid);
+        await updateFieldInDocumentInCollection('locations', location.idPost, 'prices', prices);
+        toast.success("Ціна успішно змінена");
+        setIsPricesChange(false);
+      }
+      
     } catch (error) {
       console.log(error);
       toast.info("Заявку відхилено")
@@ -112,11 +127,11 @@ export default function Content() {
                    className="w-full h-[36px] rounded border-[#E9E9E9] border pl-2 pr-6 mt-2 text-gray-600 appearance-none relative bg-[transparent]"
                 >
           <option value="" className="text-gray-400 disabled hidden">
-            {Object.values(location).length > 0 ? `№${location.id}, ${location.adress}` : 'обрати'} 
+            {Object.values(location).length > 0 ? `${location.adress}` : 'обрати'} 
           </option>
           {locations.sort((a, b) => a.id - b.id).map(el => {
             return (
-                <option key={el.id}  value={el.id}>{`№${el.id}, ${el.adress}`}</option>
+                <option key={el.id}  value={el.id}>{`${el.adress}`}</option>
             )
           })}
         </select>
@@ -144,16 +159,16 @@ export default function Content() {
                 const getProductName = () => {
                   switch (el[0]) {
                     case '95':
-                      return ['95', 'Mustang'];
+                      return ['A95'];
 
                     case 'A-95':
-                      return ['A-95', 'Євро5'];
+                      return ['A95', 'Премиум'];
 
                     case 'ДПe':
-                      return ['ДП', 'Євро5'];
+                      return ['ДП', 'Премиум'];
 
                     case 'ДП':
-                      return ['ДП', 'Mustang+'];
+                      return ['ДП'];
                    
 
 

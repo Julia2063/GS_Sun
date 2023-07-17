@@ -8,7 +8,6 @@ import { useNavigate } from "react-router";
 export default function ChangeLocation() {
   const { setLocation, locations } = useContext(AppContext);
 
-  
   const [currentLocation, setCurrentLocation] = useState({});
   const navigate = useNavigate();
 
@@ -47,7 +46,7 @@ export default function ChangeLocation() {
           </option>
           {locations.sort((a, b) => a.id - b.id).map(el => {
             return (
-                <option key={el.id}  value={el.id}>{`№${el.id}, ${el.adress}`}</option>
+                <option key={el.id}  value={el.id}>{`${el.adress}`}</option>
             )
           })}
         </select>
