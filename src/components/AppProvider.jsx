@@ -39,9 +39,7 @@ export const AppProvider = ({ children }) => {
     } catch (error) {
       console.log(error);
     }
-  }
-
-  console.log(user);
+  };
 
   const navigate = useNavigate();
 
@@ -55,7 +53,6 @@ export const AppProvider = ({ children }) => {
           switch (res[0].role) {
             case "accountant":
               db.collection('users').onSnapshot(snapshot => {
-                console.log(snapshot.docs);
                 setClients(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
               });
               db.collection('requests').onSnapshot(snapshot => {
@@ -68,7 +65,6 @@ export const AppProvider = ({ children }) => {
 
             case "operator": 
             db.collection('users').onSnapshot(snapshot => {
-              console.log(snapshot.docs);
               setClients(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
             });
               fetchLocations();
@@ -77,7 +73,6 @@ export const AppProvider = ({ children }) => {
 
             case "content": 
             db.collection('promotions').onSnapshot(snapshot => {
-              console.log(snapshot.docs);
               setPromotions(snapshot.docs.map(doc => ({...doc.data()})));
             });
               fetchLocations();
@@ -94,9 +89,6 @@ export const AppProvider = ({ children }) => {
       }
     
   }, [user]);
-
-  console.log(allRequests);
-
 
   const contextValue = useMemo(() => {
     return {

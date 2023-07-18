@@ -34,9 +34,7 @@ export default function Content() {
     }
   }, [location]);
 
-  
 
-  console.log(location)
   
   const openModal = () => {
     setIsModalOpen(true);
@@ -162,10 +160,10 @@ export default function Content() {
                       return ['A95'];
 
                     case 'A-95':
-                      return ['A95', 'Премиум'];
+                      return ['A95', 'Преміум'];
 
                     case 'ДПe':
-                      return ['ДП', 'Премиум'];
+                      return ['ДП', 'Преміум'];
 
                     case 'ДП':
                       return ['ДП'];

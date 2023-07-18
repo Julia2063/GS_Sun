@@ -19,7 +19,6 @@ export const ModalMoneyWriteOff = ({ isOpen, closeModal, client }) => {
 
     const { location } = useContext(AppContext);
 
-    console.log(info);
     const handleChange = (e) => {
       setSum(+e.target.value === "-" ? 0 : +e.target.value);
     };

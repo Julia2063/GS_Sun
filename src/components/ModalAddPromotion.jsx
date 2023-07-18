@@ -5,8 +5,6 @@ import { toast } from "react-toastify";
 import { createNewPromotion, deleteImageFromStorage, updateDocumentInCollection, uploadFileToStorage, uploadFileToStoragesFolder } from "../helpers/firebaseControl";
 import { BigButton } from "./BigButton";
 
-
-
 export const ModalAddPromotion = ({ isOpen, closeModal, update, data }) => {
   const [file, setFile] = useState(null);
   const [formData, setFormData] = useState({
@@ -17,7 +15,6 @@ export const ModalAddPromotion = ({ isOpen, closeModal, update, data }) => {
     isTop: false,
   });
 
-  console.log(data);
 
   useEffect(() => {
     if(data){

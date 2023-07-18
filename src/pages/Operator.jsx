@@ -72,8 +72,6 @@ export default function Operator() {
     };
   };
 
-  console.log(prices, location)
-
   return (
     <div className="p-10 flex gap-[24px]">
       <div className="w-4/6">
