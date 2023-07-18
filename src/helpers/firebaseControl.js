@@ -148,7 +148,7 @@ export function createNewEmployee(uid, regInfo) {
           type,
           requestDate: format(new Date(), 'HH:mm:ss dd.MM.yyyy'),
           sum,
-          location: `№${location.id}, ${location.adress}` || '',
+          location: location ? `${location.adress}` : '',
           fuelType: info.fuelType || '',
           litrs: info.litrs || '',
           userNumber: id,

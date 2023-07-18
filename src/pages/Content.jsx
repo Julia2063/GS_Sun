@@ -3,7 +3,7 @@ import { AppContext } from "../components/AppProvider";
 import { BigButton } from "../components/BigButton";
 import { createNewPriceChange, updateFieldInDocumentInCollection } from "../helpers/firebaseControl";
 import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ModalAddPromotion } from "../components/ModalAddPromotion";
 import { LinePromotion } from "../components/LinePromotion";
 import { getDate } from "date-fns";

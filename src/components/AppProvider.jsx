@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { auth, getCollection, getCollectionWhereKeyValue } from '../helpers/firebaseControl.js';
 import { useNavigate } from 'react-router';
 import { db } from '../firebase.js';
+import { onSnapshot } from 'firebase/firestore';
 
 
 export const AppContext = React.createContext({
@@ -27,7 +28,6 @@ export const AppProvider = ({ children }) => {
   const [userRole, setUserRole] = useState(null);
   const [clients, setClients] = useState([]);
   const [requests, setRequests] = useState([]);
-  const [allRequests, setAllRequests] = useState([]);
   const [location, setLocation] = useState({});
   const [locations, setLocations] = useState([]);
   const [promotions, setPromotions] = useState([]);
@@ -55,18 +55,14 @@ export const AppProvider = ({ children }) => {
               db.collection('users').onSnapshot(snapshot => {
                 setClients(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
               });
-              db.collection('requests').onSnapshot(snapshot => {
-                setRequests(snapshot.docs.filter(doc => doc.data().active).map(doc => ({...doc.data(), id: doc.id})));
-                setAllRequests(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})))
+              db.collection('requests').where('active', '==', 'true').onSnapshot(snapshot => {
+                setRequests(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
               });
 
               navigate("/clients");
               return;
 
             case "operator": 
-            db.collection('users').onSnapshot(snapshot => {
-              setClients(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
-            });
               fetchLocations();
               navigate("/changeLocation");
               return;
@@ -97,13 +93,12 @@ export const AppProvider = ({ children }) => {
       userRole, 
       clients,
       requests,
-      allRequests,
       location,
       setLocation,
       locations,
       promotions
     };
-  }, [user, userRole, clients, requests, allRequests, location, setLocation, locations, promotions]) ;
+  }, [user, userRole, clients, requests, location, setLocation, locations, promotions]) ;
 
   return (
     <AppContext.Provider value={contextValue}>

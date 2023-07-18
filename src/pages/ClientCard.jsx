@@ -31,7 +31,15 @@ export const ClientCard = ({ isOperator }) => {
   const { slug } = useParams();
   
 
-  const { clients, allRequests } = useContext(AppContext);
+  const { clients, setClients } = useContext(AppContext);
+
+  useEffect(() => {
+    if(clients.length === 0) {
+      db.collection('users').onSnapshot(snapshot => {
+        setClients(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
+      });
+    }
+  }, [])
 
   useEffect(() => {
     const currentClient = clients.find(el => el.clientNumber === +slug);
@@ -43,12 +51,18 @@ export const ClientCard = ({ isOperator }) => {
   
 
   useEffect(() => {
-    setDiscount(client?.discount);
-    setClientRequests(allRequests.filter(el => +el.userNumber === +client?.clientNumber));
-    db.collection('transactions').onSnapshot(snapshot => {
-      setClientTransaction(snapshot.docs.filter(doc => doc.data().userNumber === client?.clientNumber).map(doc => ({...doc.data(), id: doc.id})));
+    if (client) {
+      setDiscount(client?.discount);
+      db.collection('requests').where('userNumber', '==', client?.clientNumber).onSnapshot(snapshot => {
+        setClientRequests(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
+      })
+    
+    db.collection('transactions').where('userNumber', '==', client?.clientNumber).onSnapshot(snapshot => {
+      setClientTransaction(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
     });
     setVisibleTransactions([...clientTransactions, ...clientRequests]);
+    }
+    
   }, [client]);
 
   const openModal = () => {
