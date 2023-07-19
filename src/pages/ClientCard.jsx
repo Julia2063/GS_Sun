@@ -36,7 +36,7 @@ export const ClientCard = ({ isOperator }) => {
   useEffect(() => {
     if(clients.length === 0) {
       db.collection('users').onSnapshot(snapshot => {
-        setClients(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
+        setClients(snapshot.docs.map(doc => ({...doc?.data(), id: doc.id})));
       });
     }
   }, [])
@@ -46,7 +46,7 @@ export const ClientCard = ({ isOperator }) => {
 
     setClient(currentClient);
     
-  }, [clients]);
+  }, [clients, client]);
 
   
 

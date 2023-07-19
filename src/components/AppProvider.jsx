@@ -52,6 +52,7 @@ export const AppProvider = ({ children }) => {
           
           switch (res[0].role) {
             case "accountant":
+              console.log('request!!!');
               db.collection('users').onSnapshot(snapshot => {
                 setClients(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
               });
@@ -93,6 +94,7 @@ export const AppProvider = ({ children }) => {
       userRole, 
       clients,
       requests,
+      setClients,
       location,
       setLocation,
       locations,

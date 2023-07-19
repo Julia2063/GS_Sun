@@ -75,6 +75,7 @@ export const ModalMoneyWriteOff = ({ isOpen, closeModal, client }) => {
       };
 
       try {
+        await updateFieldInDocumentInCollection('users', client.id, 'previousBalance', (+client.balance));
         await updateFieldInDocumentInCollection('users', client.id, 'balance', (+(+client.balance - sum).toFixed(2)));
         await createNewTransaction('write-off', client.clientNumber, sum, location, info);
         

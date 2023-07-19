@@ -22,7 +22,10 @@ export const ModalMoneyTransfer = ({ isOpen, closeModal, client, isGeneralPage, 
         return;
       };
       try {
+        await updateFieldInDocumentInCollection('users', client.id, 'previousBalance', (+client.balance));
         await updateFieldInDocumentInCollection('users', client.id, 'balance', (+client.balance + sum));
+        ;
+
         await createNewTransaction('transfer', client.clientNumber, sum);
         if (isGeneralPage) {
           await updateFieldInDocumentInCollection('requests', data.id, 'active', false);
