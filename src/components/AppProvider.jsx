@@ -56,7 +56,7 @@ export const AppProvider = ({ children }) => {
               db.collection('users').onSnapshot(snapshot => {
                 setClients(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
               });
-              db.collection('requests').where('active', '==', 'true').onSnapshot(snapshot => {
+              db.collection('requests').where('active', '==', true).onSnapshot(snapshot => {
                 setRequests(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
               });
 
