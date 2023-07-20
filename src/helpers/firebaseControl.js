@@ -162,19 +162,18 @@ export function createNewEmployee(uid, regInfo) {
       });
     };
 
-  export function createNewPriceChange(locationId, oldData, newData, uid) {
+  export function createNewPriceChange(location, oldData, newData, uid) {
   
       return new Promise(function (resolve, reject) {
       
         const priceChange_to_firebase_start = {
-          locationId,
           changeDate: format(new Date(), 'HH:mm:ss dd.MM.yyyy'),
           oldData,
           newData,
           uid
         };
-        setDocumentToCollection('priceChanges', priceChange_to_firebase_start).then(r => {
-          console.log('priseChanges saved in DB');
+        updateFieldInDocumentInCollection('locations', location.idPost, 'priceChanges', [...location.priceChanges, priceChange_to_firebase_start]).then(r => {
+          console.log('priceChanges saved in DB');
           resolve(r);
         }).catch(e => {
           reject(e);

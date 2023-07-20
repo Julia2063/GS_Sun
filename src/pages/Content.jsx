@@ -58,7 +58,7 @@ export default function Content() {
     e.preventDefault();
     try { 
       if(isPricesChange) {
-        await createNewPriceChange(location.id, location.prices, prices, user.uid);
+        await createNewPriceChange(location, location.prices, prices, user.uid);
         await updateFieldInDocumentInCollection('locations', location.idPost, 'prices', prices);
         toast.success("Ціна успішно змінена");
         setIsPricesChange(false);
@@ -69,7 +69,6 @@ export default function Content() {
       toast.info("Заявку відхилено")
     };
   };
-
 
   return (
     <div className="p-10 flex gap-[24px]">
@@ -209,7 +208,8 @@ export default function Content() {
              
       </form>
 
-      <Link className="flex justify-between items-center" to={'content/changeHistory'}>
+      {Object.entries(location).length > 0 && (
+        <Link className="flex justify-between items-center" to={'content/changeHistory'}>
         <span className="text-[18px]">Історія змін</span>
         <span>
           <svg width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -217,6 +217,9 @@ export default function Content() {
           </svg>
         </span>
       </Link>
+      )}
+
+      
       </div>
       
       <ModalAddPromotion

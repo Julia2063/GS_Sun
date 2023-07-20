@@ -60,10 +60,10 @@ export default function Operator() {
     e.preventDefault();
     try { 
       if(isPricesChange) {
-        await createNewPriceChange(location.id, location.prices, prices, user.uid);
-      await updateFieldInDocumentInCollection('locations', location.idPost, 'prices', prices);
-      toast.success("Ціна успішно змінена");
-      setIsPricesChange(false);
+        await createNewPriceChange(location, location.prices, prices, user.uid);
+        await updateFieldInDocumentInCollection('locations', location.idPost, 'prices', prices);
+        toast.success("Ціна успішно змінена");
+        setIsPricesChange(false);
       }
       
     } catch (error) {
@@ -201,7 +201,8 @@ export default function Operator() {
              
       </form>
 
-      <Link className="flex justify-between items-center" to={'operator/changeHistory'}>
+      {Object.entries(location).length > 0 && (
+        <Link className="flex justify-between items-center" to={'operator/changeHistory'}>
         <span className="text-[18px]">Історія змін</span>
         <span>
           <svg width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -209,6 +210,9 @@ export default function Operator() {
           </svg>
         </span>
       </Link>
+      )}
+
+      
       </div>
       
         

@@ -60,7 +60,7 @@ export const ClientCard = ({ isOperator }) => {
     db.collection('transactions').where('userNumber', '==', client?.clientNumber).onSnapshot(snapshot => {
       setClientTransaction(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
     });
-    setVisibleTransactions([...clientTransactions, ...clientRequests]);
+      setVisibleTransactions([...clientTransactions, ...clientRequests]);
     }
     
   }, [client]);
@@ -156,11 +156,33 @@ export const ClientCard = ({ isOperator }) => {
     };
   };
 
+  useEffect(() => {
+    const deleteTransactions = clientTransactions.map(el => {
+      return {...el, requestDate: `${new Date(getDate(el.requestDate))}`}}).filter(el => new Date(el.requestDate) < new Date().setDate(new Date().getDate() - 62));
+    const deleteRequest = clientRequests.filter(el => {
+      return new Date(el.requestDate) < new Date().setDate(new Date().getDate() - 62);
+    });
+    
+    if(deleteTransactions.length > 0) {
+      deleteTransactions.forEach(el => db.collection('transactions').doc(el.idPost).delete().then(() => {
+        console.log("Document successfully deleted!");
+    }).catch((error) => {
+        console.error("Error removing document: ", error);
+    }))
+    };
+    if(deleteRequest.length > 0) {
+      deleteRequest.forEach(el => db.collection('requests').doc(el.id).delete().then(() => {
+        console.log("Document successfully deleted!");
+    }).catch((error) => {
+        console.error("Error removing document: ", error);
+    }))
+    };
+  }, [clientTransactions, clientRequests]);
+
   return (
     <div className='px-8 py-10 flex flex-col gap-7'>
       {client ? (
         
-
          <><div className='flex justify-between'>
           {isOperator
             ? (
@@ -339,7 +361,7 @@ export const ClientCard = ({ isOperator }) => {
                         return new Date(getDate(b.requestDate)) - new Date(getDate(a.requestDate));
                       }).map(el => {
                         return (
-                          <LineTransactionOperator data={el} key={el.idPost} />
+                          <LineTransactionOperator data={el} key={el} />
                         );
                       })
 
@@ -349,7 +371,7 @@ export const ClientCard = ({ isOperator }) => {
                         return new Date(getDate(b.requestDate)) - new Date(getDate(a.requestDate));
                       }).map(el => {
                         return (
-                          <LineTransactionOperator data={el} ey={el.idPost} />
+                          <LineTransactionOperator data={el} key={el} />
                         );
                       })
                     )}
@@ -366,7 +388,7 @@ export const ClientCard = ({ isOperator }) => {
                         return new Date(getDate(b.requestDate)) - new Date(getDate(a.requestDate));
                       }).map(el => {
                         return (
-                          <LineTransaction data={el} isRequest={Object.values(el).length === 6 || Object.values(el).length === 7} />
+                          <LineTransaction key={el} data={el} isRequest={Object.values(el).length === 6 || Object.values(el).length === 7} />
                         );
                       })
 
@@ -376,7 +398,7 @@ export const ClientCard = ({ isOperator }) => {
                         return new Date(getDate(b.requestDate)) - new Date(getDate(a.requestDate));
                       }).map(el => {
                         return (
-                          <LineTransaction data={el} isRequest={Object.values(el).length === 6 || Object.values(el).length === 7} />
+                          <LineTransaction key={el} data={el} isRequest={Object.values(el).length === 6 || Object.values(el).length === 7} />
                         );
                       })
                     )}

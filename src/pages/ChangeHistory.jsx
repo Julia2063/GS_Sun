@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { Link } from "react-router-dom"
 import { ChangeTableHeader } from "../components/ChangeTableHeader"
-import { getCollectionWhereKeyValue } from '../helpers/firebaseControl';
 import { AppContext } from '../components/AppProvider';
 import { LineChange } from '../components/LineChange';
 import { getDate } from '../App';
@@ -11,19 +10,10 @@ export const ChangeHistory = () => {
 
   const { location, userRole } = useContext(AppContext);
 
-  const fetchData = async () => {
-    try {
-      const loadedData = 
-        await getCollectionWhereKeyValue('priceChanges', 'locationId', location.id);
-        setChanges(loadedData);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
-    fetchData();
+    setChanges(location.priceChanges);
   }, []);
+
 
     return (
         <div className="py-[40px] px-10 text-[18px] flex flex-col gap-[20px]">
@@ -46,10 +36,10 @@ export const ChangeHistory = () => {
             <ChangeTableHeader />
             {changes.sort((a, b) => {
          
-              return new Date(getDate(b.changeDate)) - new Date(getDate( a.changeDate));
+              return new Date(getDate(b.changeDate)) - new Date(getDate(a.changeDate));
             }).map(el => {
                 return (
-                    <LineChange data={el} key={el.idPost}/>
+                    <LineChange data={el} key={el.uid}/>
                 )
             })}
             </div>

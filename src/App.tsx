@@ -16,7 +16,7 @@ import Content from "./pages/Content";
 import { NotEmployees } from "./pages/NotEmployees";
 
 export const getDate = (date: string) => {
-  if (date.length < 25) {
+  if (date?.length < 25) {
     const year = date.split(' ');
   return `${year[0]} ${year[1].split('.').reverse().join('/')}`
   } else {
