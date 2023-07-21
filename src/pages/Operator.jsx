@@ -145,7 +145,7 @@ export default function Operator() {
                 </div>
               </div>
 
-              {location.prices && Object.entries(location.prices).map(el => {
+              {location.prices && Object.entries(location.prices).sort().map(el => {
                 const getProductName = () => {
                   switch (el[0]) {
                     case '95':

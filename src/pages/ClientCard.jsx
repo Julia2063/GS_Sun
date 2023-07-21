@@ -230,6 +230,7 @@ export const ClientCard = ({ isOperator }) => {
               <div>
                 <div className="flex justify-between w-[400px]"><span>Номер телефона:</span> <span>{client?.phoneNumber}</span></div>
                 <div className="flex justify-between w-[400px]"><span>Дата народження:</span> <span>{client?.birthday}</span> </div>
+                <div className="flex justify-between w-[400px]"><span>Email:</span> <span>{client?.email?.length > 0 ? client?.email : 'не заповнено' }</span> </div>
               </div>
             </div>
 
@@ -241,7 +242,7 @@ export const ClientCard = ({ isOperator }) => {
                 Знижка
               </div>
 
-              {Object.entries(client.discount).map(el => {
+              {Object.entries(client.discount).sort().map(el => {
                 const getProductName = () => {
                   switch (el[0]) {
                     case '95':
