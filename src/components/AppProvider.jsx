@@ -2,8 +2,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { auth, getCollection, getCollectionWhereKeyValue } from '../helpers/firebaseControl.js';
 import { useNavigate } from 'react-router';
 import { db } from '../firebase.js';
-import { onSnapshot } from 'firebase/firestore';
-
 
 export const AppContext = React.createContext({
   user: null,

@@ -15,6 +15,7 @@ export const ModalMoneyWriteOff = ({ isOpen, closeModal, client }) => {
       litrs: 0,
     });
 
+
     const [operationType, setOperationType] = useState('litrs');
 
     const { location } = useContext(AppContext);
@@ -39,7 +40,7 @@ export const ModalMoneyWriteOff = ({ isOpen, closeModal, client }) => {
         setInfo({...info,
         litrs: +(sum / (location.prices[info.fuelType] - client.discount[info.fuelType])).toFixed(2)});
       }
-    }, [sum]);
+    }, [sum, info.fuelType]);
     
 
     const getProductName = (el) => {

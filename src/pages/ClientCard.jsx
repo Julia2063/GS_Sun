@@ -301,7 +301,8 @@ export const ClientCard = ({ isOperator }) => {
               )}
 
             </form>
-          </div><div
+          </div>
+          <div
             className='w-full shadow-md h-max rounded-lg border-[1px] flex flex-col gap-[20px]'
           >
             <div className='flex justify-between  p-[15px]'>
