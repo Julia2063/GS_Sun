@@ -26,7 +26,7 @@ export const LineTransactionOperator = ({ data}) => {
   return (
     <div className="w-full h-max flex flex-row items-center justify-between border-b border-['#E9E9E9'] py-[8px]">
       <div className="w-1/5 pl-6 pr-6">
-        <span>{data.requestDate}</span>
+        <span>{`${format(new Date(data.requestDate), 'HH:mm:ss dd.MM.yyy') }`}</span>
       </div>
       <div className="w-1/5">
         <div>

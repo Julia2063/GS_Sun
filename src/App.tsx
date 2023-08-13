@@ -14,6 +14,7 @@ import Operator from "./pages/Operator";
 import { ChangeHistory } from "./pages/ChangeHistory";
 import Content from "./pages/Content";
 import { NotEmployees } from "./pages/NotEmployees";
+import { Reports } from "./pages/Reports";
 
 export const getDate = (date: string) => {
   if (date?.length < 25) {
@@ -26,6 +27,9 @@ export const getDate = (date: string) => {
 
 function App() {
   const { user, userRole, location } = useContext(AppContext);
+
+  console.log(user);
+
 
   return (
     <>  
@@ -43,6 +47,8 @@ function App() {
                 <Route path=":slug" element={<ClientCard isOperator={false} />} />
               </Route>
               <Route path="/employees" element={<Employees />} />
+              <Route path="/reports" element={<Reports />} />
+
               </>
             )} 
             {userRole === "operator" && (

@@ -14,6 +14,7 @@ import { TransactionOperatorTableHeader } from '../components/TransactionOperato
 import { LineTransactionOperator } from '../components/LineTransactionOperator';
 import { ModalMoneyWriteOff } from '../components/ModalMoneyWriteOff';
 import { getDate } from '../App';
+import { format } from 'date-fns';
 
 export const ClientCard = ({ isOperator }) => {
   const [client, setClient] = useState(null);
@@ -127,12 +128,12 @@ export const ClientCard = ({ isOperator }) => {
       }
     }).filter(
       el => `${el.sum}`.includes(searchQuery) 
-      || `${el.requestDate}`.includes(searchQuery)
+      || `${format(new Date(el.requestDate), 'HH:mm:ss dd.MM.yyy') }`.includes(searchQuery)
     ) 
     : [...clientTransactions, ...clientRequests]
       .filter(
         el => `${el.sum}`.includes(searchQuery) 
-        || `${el.requestDate}`.includes(searchQuery)
+        || `${format(new Date(el.requestDate), 'HH:mm:ss dd.MM.yyy') }`.includes(searchQuery)
       );
     if (searchQuery.length > 0) {
       setVisibleTransactions(searchResult);
@@ -158,7 +159,7 @@ export const ClientCard = ({ isOperator }) => {
 
   useEffect(() => {
     const deleteTransactions = clientTransactions.map(el => {
-      return {...el, requestDate: `${new Date(getDate(el.requestDate))}`}}).filter(el => new Date(el.requestDate) < new Date().setDate(new Date().getDate() - 62));
+      return {...el, requestDate: `${new Date(el.requestDate)}`}}).filter(el => new Date(el.requestDate) < new Date().setDate(new Date().getDate() - 62));
     const deleteRequest = clientRequests.filter(el => {
       return new Date(el.requestDate) < new Date().setDate(new Date().getDate() - 62);
     });
@@ -360,7 +361,7 @@ export const ClientCard = ({ isOperator }) => {
                     ? (
                       clientTransactions.filter(el => el.type === 'write-off').sort((a, b) => {
 
-                        return new Date(getDate(b.requestDate)) - new Date(getDate(a.requestDate));
+                        return new Date(b.requestDate) - new Date(a.requestDate);
                       }).map(el => {
                         return (
                           <LineTransactionOperator data={el} key={el} />
@@ -370,7 +371,7 @@ export const ClientCard = ({ isOperator }) => {
                     ) : (
                       visibleTransactions.filter(el => el.type === 'write-off').sort((a, b) => {
 
-                        return new Date(getDate(b.requestDate)) - new Date(getDate(a.requestDate));
+                        return new Date(b.requestDate) - new Date(a.requestDate);
                       }).map(el => {
                         return (
                           <LineTransactionOperator data={el} key={el} />
@@ -387,7 +388,7 @@ export const ClientCard = ({ isOperator }) => {
                     ? (
                       [...clientRequests, ...clientTransactions].sort((a, b) => {
 
-                        return new Date(getDate(b.requestDate)) - new Date(getDate(a.requestDate));
+                        return new Date(b.requestDate) - new Date(a.requestDate);
                       }).map(el => {
                         return (
                           <LineTransaction key={el} data={el} isRequest={Object.values(el).length === 6 || Object.values(el).length === 7} />
@@ -397,7 +398,7 @@ export const ClientCard = ({ isOperator }) => {
                     ) : (
                       visibleTransactions.sort((a, b) => {
 
-                        return new Date(getDate(b.requestDate)) - new Date(getDate(a.requestDate));
+                        return new Date(b.requestDate) - new Date(a.requestDate);
                       }).map(el => {
                         return (
                           <LineTransaction key={el} data={el} isRequest={Object.values(el).length === 6 || Object.values(el).length === 7} />

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import Modal from "react-modal";
 import { BigButton } from "./BigButton";
 
@@ -7,9 +7,12 @@ import { createNewTransaction, deleteImageFromStorage, downloadReciept, updateFi
 import {format} from 'date-fns';
 
 import Download from '../assets/images/download.svg';
+import { AppContext } from './AppProvider';
 
 export const ModalMoneyTransfer = ({ isOpen, closeModal, client, isGeneralPage, data }) => {
     const [sum, setSum] = useState(0);
+
+    const { user } = useContext(AppContext);
 
     const handleChange = (e) => {
       setSum(+e.target.value);
@@ -26,7 +29,7 @@ export const ModalMoneyTransfer = ({ isOpen, closeModal, client, isGeneralPage, 
         await updateFieldInDocumentInCollection('users', client.id, 'balance', (+client.balance + sum));
         ;
 
-        await createNewTransaction('transfer', client.clientNumber, sum);
+        await createNewTransaction('transfer', client.clientNumber, sum, user);
         if (isGeneralPage) {
           await updateFieldInDocumentInCollection('requests', data.id, 'active', false);
           await deleteImageFromStorage(data.url);

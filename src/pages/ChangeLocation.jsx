@@ -4,6 +4,7 @@ import { Divider } from "../components/Divider";
 import { Button } from "../components/Button";
 import { AppContext } from "../components/AppProvider";
 import { useNavigate } from "react-router";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 export default function ChangeLocation() {
   const { setLocation, locations } = useContext(AppContext);
@@ -11,10 +12,13 @@ export default function ChangeLocation() {
   const [currentLocation, setCurrentLocation] = useState({});
   const navigate = useNavigate();
 
+  const [locationLocalStorage, setlocationLocalStorage] = useLocalStorage('location', {});
+
   useEffect(() => {
     const findLoc = locations.find(el => el.id === currentLocation);
     if(findLoc) {
       setLocation(findLoc);
+      setlocationLocalStorage(findLoc);
       navigate('/operator');
     };
     
@@ -39,7 +43,7 @@ export default function ChangeLocation() {
             setCurrentLocation(e.target.value);
            
           }}
-          className="w-full h-[36px] rounded border-[#E9E9E9] border pl-2 pr-6 mt-2 text-gray-600 appearance-none z-10 relative bg-[transparent]"
+          className="w-full h-[36px] rounded border-[#E9E9E9] border pl-2 pr-6 mt-2 text-gray-600 appearance-none z-9 relative bg-[transparent]"
         >
           <option value="" className="text-gray-400 disabled hidden">
             обрати
@@ -50,10 +54,10 @@ export default function ChangeLocation() {
             )
           })}
         </select>
-        <span className="absolute right-[30px] bottom-[23px] transform rotate-180">
+        <span className="absolute right-[30px] bottom-[23px] transform rotate-180 z-0">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 text-gray-400 pointer-events-none"
+                className="h-4 w-4 text-gray-400 pointer-events-none "
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >

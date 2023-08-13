@@ -18,7 +18,7 @@ export const ModalMoneyWriteOff = ({ isOpen, closeModal, client }) => {
 
     const [operationType, setOperationType] = useState('litrs');
 
-    const { location } = useContext(AppContext);
+    const { location, user } = useContext(AppContext);
 
     const handleChange = (e) => {
       setSum(+e.target.value === "-" ? 0 : +e.target.value);
@@ -78,7 +78,7 @@ export const ModalMoneyWriteOff = ({ isOpen, closeModal, client }) => {
       try {
         await updateFieldInDocumentInCollection('users', client.id, 'previousBalance', (+client.balance));
         await updateFieldInDocumentInCollection('users', client.id, 'balance', (+(+client.balance - sum).toFixed(2)));
-        await createNewTransaction('write-off', client.clientNumber, sum, location, info);
+        await createNewTransaction('write-off', client.clientNumber, sum, user, location, info);
         
         setSum(0);
         toast.success("Кошти успішно списано")
@@ -103,7 +103,7 @@ export const ModalMoneyWriteOff = ({ isOpen, closeModal, client }) => {
         className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#FAFAFA] w-[688px] h-max rounded-lg shadow-md p-8"
         overlayClassName="fixed inset-0 bg-black bg-opacity-50"
         autoFocus={false}
-    > 
+      > 
     
         <p className="font-semibold text-2xl">Списання коштів</p>
       <form className="pt-6 flex flex-col gap-10" onSubmit={(e) => handleSubmit(e)}>

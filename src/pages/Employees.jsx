@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext} from "react";
 import { db } from "../firebase"; // DON'T DELETE
 
 import Modal from "react-modal";
@@ -8,6 +8,7 @@ import { EmployeeTableHeader } from "../components/EmployeeTableHeader";
 import { SearchLineHeader } from "../components/SearchLineHeader";
 import ModalAddEmployee from "../components/ModalAddEmployee";
 import { Pagination } from "../components/Pagination";
+import { AppContext} from "../components/AppProvider";
 
 Modal.setAppElement("#root");
 
@@ -20,12 +21,12 @@ export default function Employees() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isChanging, setIsChanging] = useState(false);
   const [currentData, setCurrentData] = useState(null);
+
+  const { employees } = useContext(AppContext);
   
 
   useEffect(() => {
-    db.collection('employees').onSnapshot(snapshot => {
-      setDataToPaginate(snapshot.docs.map(doc => ({...doc.data(), idPost: doc.id})));
-    });
+    setDataToPaginate(employees);
   }, []);
 
   const openModal = () => {

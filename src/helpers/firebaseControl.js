@@ -140,18 +140,21 @@ export function createNewEmployee(uid, regInfo) {
     return result;
   };
 
-  export function createNewTransaction(type, id, sum, location, info = {}) {
+  export function createNewTransaction(type, id, sum, operator, location={}, info = {}) {
+
+    console.log(operator);
   
       return new Promise(function (resolve, reject) {
       
         const transaction_to_firebase_start = {
           type,
-          requestDate: format(new Date(), 'HH:mm:ss dd.MM.yyyy'),
+          requestDate: Date.parse(new Date()),
           sum,
-          location: location ? `${location.adress}` : '',
+          location: Object.values(location).length > 0 ? `${location.adress}` : '',
           fuelType: info.fuelType || '',
           litrs: info.litrs || '',
           userNumber: id,
+          uid: operator.uid,
         };
         setDocumentToCollection('transactions', transaction_to_firebase_start).then(r => {
           console.log('transaction saved in DB');

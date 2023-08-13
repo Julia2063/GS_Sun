@@ -7,6 +7,8 @@ import { Divider } from "../components/Divider";
 /* import { Checkbox } from "../components/Checkbox"; */
 import { Button } from "../components/Button";
 import { auth, getCollectionWhereKeyValue, updateFieldInDocumentInCollection } from "../helpers/firebaseControl";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { format } from "date-fns";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({
@@ -14,6 +16,8 @@ export default function SignIn() {
     password: "",
   });
   const [isPasswordChanging, setIsPasswordChanging] = useState(false);
+
+  const [changeLocalStorage, setChangeLocalStorage] = useLocalStorage('changeDate', '');
 
   const { email, password } = formData;
 
@@ -44,6 +48,7 @@ export default function SignIn() {
         email,
         password
       );
+      setChangeLocalStorage(format(new Date(), 'yyyy/MM/dd HH:mm') );
     } catch (error) {
       console.log(error);
       toast.error("Bad user credentials");

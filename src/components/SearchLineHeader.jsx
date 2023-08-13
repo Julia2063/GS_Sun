@@ -2,6 +2,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { BigButton } from "../components/BigButton";
 
+import Exel from '../assets/images/exel.svg';
+
 export const SearchLineHeader = ({ 
   onButtonPress, 
   searchQuery, 
@@ -9,7 +11,10 @@ export const SearchLineHeader = ({
   title,
   role,
   setIsChanging,
-  setCurrentData
+  setCurrentData,
+  noSearch,
+  otherReport,
+  exportToExcel
  }) => {
 
   return (
@@ -18,7 +23,8 @@ export const SearchLineHeader = ({
         <div className="pt-[14px] pb-[14px] pl-6">
           <span className=" text-lg mr-5">{title}</span>
         </div>
-        <div className="relative flex items-center">
+        {!noSearch && (
+           <div className="relative flex items-center">
           <input
             type="text"
             value={searchQuery}
@@ -30,6 +36,8 @@ export const SearchLineHeader = ({
             <FontAwesomeIcon icon={faSearch} color="#727272" fontSize={14} />
           </div>
         </div>
+        )}
+       
       </div>
       {role === "employees" && (
         <div>
@@ -41,6 +49,25 @@ export const SearchLineHeader = ({
           }}
           type="button"
           label="+ Додати"
+          labelColor="white"
+        />
+      </div>
+      )}
+
+      {role === "reports" && (
+        <div className="flex gap-[40px]">
+          {otherReport && (
+            <button 
+              type="button"
+              onClick={exportToExcel}
+            >
+              <img src={Exel} alt="exel" />
+            </button>
+          )}
+        <BigButton
+          onClick={onButtonPress}
+          type="button"
+          label={otherReport ? 'Сформувати інший звіт' : "Сформувати звіт"} 
           labelColor="white"
         />
       </div>
