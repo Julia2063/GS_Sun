@@ -3,6 +3,7 @@ import Modal from "react-modal";
 import { BigButton } from "./BigButton";
 import { AppContext } from './AppProvider';
 import { InputWithSearch } from './InputWithSearch';
+import { Transaction } from 'firebase/firestore';
 
 export const ReportAccountantModal = ({ isOpen, closeModal, filter, setFilter, clientMark, setClientMark, getTransactions}) => {
     const { clients, locations, employees } = useContext(AppContext);
@@ -84,7 +85,7 @@ export const ReportAccountantModal = ({ isOpen, closeModal, filter, setFilter, c
                         name="client"
                         value={clientMark === 'name' ? filter.client : ''}
                         disabled={clientMark === 'number'}
-                        array={clients.filter(el => el.lastname.toLowerCase().includes(filter.client.toLowerCase())).map(el => el.lastname)}
+                        array={clientMark === 'name' ? clients.filter(el => el.lastname.toLowerCase().includes(filter.client.toLowerCase())).map(el => el.lastname) : []}
                         filter={filter}
                         setFilter={setFilter}
                     />

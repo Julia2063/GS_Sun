@@ -52,7 +52,7 @@ export const Reports = () => {
             return 'ДП';
          
           default:
-            return [el] ;
+            return el;
         }
       };
 
@@ -60,19 +60,19 @@ export const Reports = () => {
       const getProductNameReverce = (el) => {
         switch (el) {
           case '95':
-            return ['A95'];
+            return 'A95';
 
           case 'A-95':
-            return ['A95+'];
+            return 'A95+';
 
           case 'ДПe':
-            return ['ДП+'];
+            return 'ДП+';
 
           case 'ДП':
-            return ['ДП'];
+            return 'ДП';
          
           default:
-            return [el] ;
+            return el;
         }
       };
 
@@ -82,6 +82,10 @@ export const Reports = () => {
         let query = db.collection("transactions").where('type', '==', 'write-off');
         const currentClient = clientMark === 'number' ? filter.client : clients.filter(el => el.lastname === filter.client)[0]?.clientNumber;
         const currentOperator = employees.filter(el => el.surname === filter.operator)[0]?.uid;
+        const currentFuelType = getProductName(filter.fuelType);
+
+        console.log(currentClient);
+        console.log(currentFuelType);
 
       
             if (filter.startDate.length > 0) {
@@ -89,7 +93,7 @@ export const Reports = () => {
             };
                
             
-            if (filter.client.length > 0) {
+            if (filter.client.length > 0 || filter.client > 0) {
                   query = query.where('userNumber', '==', currentClient);
             };
               
@@ -99,7 +103,7 @@ export const Reports = () => {
             };
 
             if (filter.fuelType.length > 0) {
-                query = query.where('fuelType', '==', getProductName(filter.fuelType));
+                query = query.where('fuelType', '==', currentFuelType);
             };
             
             if (filter.operator.length > 0) {
@@ -129,6 +133,8 @@ export const Reports = () => {
         const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet JS" });
         XLSX.writeFile(wb, `Accountant_Report${filter.startDate}_${filter.endDate}.xlsx`);
     };
+
+    console.log(transactions);
 
     return (
         <>
@@ -201,7 +207,7 @@ export const Reports = () => {
                                 {transactions.map(el => el.sum).reduce((a, b) => a + b, 0).toFixed(2)}
                             </td>
                             <td className='p-[10px]'>
-                                {transactions.map(el => el.litrs).reduce((a, b) => a + b, 0)}
+                                {transactions.map(el => el.litrs).reduce((a, b) => a + b, 0).toFixed(2)}
                             </td>
                             <td className='p-[10px]'></td>
                            
