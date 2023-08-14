@@ -169,6 +169,7 @@ export const Reports = () => {
                             <th className='py-[10px]'>№ клієнта</th>
                             <th className='py-[10px]'>АЗС</th>
                             <th className='py-[10px]'>Тип палива</th>
+                            <th className='py-[10px]'>Ціна, грн<br/>(з урахуванням знижки)</th>
                             <th className='py-[10px]'>Сумма, грн</th>
                             <th className='py-[10px]'>Літри</th>
                             <th className='py-[10px]'>Оператор</th>
@@ -189,6 +190,7 @@ export const Reports = () => {
                                     <td className='p-[10px]'>{el.userNumber}</td>
                                     <td className='p-[10px]'>{el.location}</td>
                                     <td className='p-[10px]'>{getProductNameReverce(el.fuelType)}</td>
+                                    <td className='p-[10px]'>{(el.sum / el.litrs).toFixed(2)}</td>
                                     <td className='p-[10px]'>{el.sum.toFixed(2)}</td>
                                     <td className='p-[10px]'>{el.litrs}</td>
                                     <td className='p-[10px]'>
