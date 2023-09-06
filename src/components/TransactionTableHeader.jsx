@@ -20,7 +20,7 @@ export const TransactionTableHeader = () => {
           <span className=" font-bold text-[#727272]">Літри</span>
         </div>
         <div className="w-1/6 pl-6 pr-6">
-          <span className=" font-bold text-[#727272]">Квітанція</span>
+          <span className=" font-bold text-[#727272]">Квитанція</span>
         </div>
       </div>
     );
