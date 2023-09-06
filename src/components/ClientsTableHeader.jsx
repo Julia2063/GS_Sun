@@ -47,7 +47,7 @@ export const ClientsTableHeader = ({ isRequests, handleSortUp, handleSortDown })
         <div className="w-1/5">
           <span className=" font-bold text-[#727272]">
           {isRequests 
-            ? 'Квітанція'
+            ? 'Квитанція'
             : 'Баланс'
             }
           </span>

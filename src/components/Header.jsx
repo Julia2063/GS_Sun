@@ -70,7 +70,7 @@ export default function Header() {
 
   return (
     <>
-      <div className=" bg-[#00B488] h-[70px] flex border border-[#DEE2E6] sticky top-0">
+      <div className=" bg-[#00B488] h-[70px] flex border border-[#DEE2E6] sticky top-0 z-10">
         <header className="flex justify-between items-center px-10 w-[100%]">
 
           {user && (

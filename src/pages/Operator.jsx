@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { QrReader } from 'react-qr-reader';
 
 import { doc, onSnapshot } from 'firebase/firestore';
@@ -86,7 +87,7 @@ export default function Operator() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => handleKeyDown(e)}
-            placeholder="Шукати..."
+            disabled
             className="w-full h-[29px] py-[5.5px] pl-2 pr-2 text-gray-700 focus:outline-none focus:shadow-outline border border-['#FFFFFF'] rounded-l-[3px] text-sm"
           />
           <button 
@@ -94,6 +95,16 @@ export default function Operator() {
             onClick={handleClick}
           >
             <FontAwesomeIcon icon={faSearch} color="#727272" fontSize={14} />
+          </button>
+          <button 
+            className="relative inset-y-0 h-[29px] right-0 flex items-center justify-center p-2   text-gray-500 bg-[#FAFAFA] border border-['#E9E9E9'] rounded-r-[3px] right-[1px]"
+            onClick={() => {
+              setSearchQuery('');
+              setIsCamera(false);
+              setData('No result');
+            }}
+          >
+            <FontAwesomeIcon icon={faXmark} color="#727272" fontSize={14} />
           </button>
       </div>
       

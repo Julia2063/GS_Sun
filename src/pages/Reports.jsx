@@ -206,10 +206,10 @@ export const Reports = () => {
                             <td className='p-[10px]'></td>
                             <td className='p-[10px]'></td>
                             <td className='p-[10px]'>
-                                {transactions.map(el => el.sum).reduce((a, b) => a + b, 0).toFixed(2)}
+                                
                             </td>
                             <td className='p-[10px]'>
-                                {transactions.map(el => el.litrs).reduce((a, b) => a + b, 0).toFixed(2)}
+                                {transactions.map(el => el.sum).reduce((a, b) => a + b, 0).toFixed(2)}
                             </td>
                             <td className='p-[10px]'></td>
                            

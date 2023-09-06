@@ -73,8 +73,7 @@ export default function Clients() {
         searchQuery={searchQueryRequest}
         setSearchQuery={setSearchQueryRequest}
         title="Активні заявки"
-        
-        />
+      />
       <ClientsTableHeader 
         isRequests 
         handleSortUp={handleSortUp}

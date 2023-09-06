@@ -74,7 +74,7 @@ export const OperatorTable = ({ endReporOperator }) => {
                     {location.prices && Object.keys(location.prices).sort().map((el, i) => {
                             return (
                                 <td key={el} className='text-center'>
-                                    {transactions.filter(e => e.fuelType === el).map(e => e.litrs).reduce((a, b) => a + b, 0)}
+                                    {transactions.filter(e => e.fuelType === el).map(e => e.litrs).reduce((a, b) => a + b, 0).toFixed(2)}
                                 </td>
                             )
                         }) }
