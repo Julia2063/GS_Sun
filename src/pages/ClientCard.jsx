@@ -391,7 +391,7 @@ export const ClientCard = ({ isOperator }) => {
                         return new Date(b.requestDate) - new Date(a.requestDate);
                       }).map(el => {
                         return (
-                          <LineTransaction key={el} data={el} isRequest={Object.values(el).length === 6 || Object.values(el).length === 7} />
+                          <LineTransaction key={el} data={el} isRequest={Object.values(el).length <= 7} />
                         );
                       })
 
@@ -401,7 +401,7 @@ export const ClientCard = ({ isOperator }) => {
                         return new Date(b.requestDate) - new Date(a.requestDate);
                       }).map(el => {
                         return (
-                          <LineTransaction key={el} data={el} isRequest={Object.values(el).length === 6 || Object.values(el).length === 7} />
+                          <LineTransaction key={el} data={el} isRequest={Object.values(el).length <= 7 } />
                         );
                       })
                     )}

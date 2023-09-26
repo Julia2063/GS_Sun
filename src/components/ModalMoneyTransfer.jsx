@@ -62,7 +62,7 @@ export const ModalMoneyTransfer = ({ isOpen, closeModal, client, isGeneralPage, 
         </p>
       } 
         <p className="font-semibold text-2xl">Зарахування коштів</p>
-        {isGeneralPage && (
+        {(isGeneralPage && data?.url) && (
           <div className='flex flex-col gap-[10px]'>
           <p className='mt-[10px] bg-[#F8C9C9] w-max mx-auto px-[20px] h-[40px] leading-[40px] rounded-lg'>
             При зарахуванні коштів квітанцію буде видалено !

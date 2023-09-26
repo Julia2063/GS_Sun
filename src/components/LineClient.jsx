@@ -43,8 +43,12 @@ export const LineClient = ({ data, isRequests, name }) => {
     try {
       await updateFieldInDocumentInCollection('requests', data.id, 'reject', true);
       await updateFieldInDocumentInCollection('requests', data.id, 'active', false);
-      await deleteImageFromStorage(data.url);
+      
+      if(data.url) {
+        await deleteImageFromStorage(data.url);
         await updateFieldInDocumentInCollection('requests', data.id, 'url', '');
+      };
+      
       toast.success("Заявку успішно відхилено");
     } catch (error) {
       console.log(error);
@@ -85,22 +89,30 @@ export const LineClient = ({ data, isRequests, name }) => {
               {isRequests 
               ? <div className="flex">
                 <div className="w-3/5">
-                  <a 
+                  {data.url && (
+                    <a 
                     href={data.url} 
                     target="_blank" 
                     className="text-blue-600 underline"
                   >
                     {`receipt${format(new Date(data.requestDate), 'dd.MM.yyyy')}`}
                   </a>
+                  )}
                 </div>
-                <button 
-                  className="w-1/5"
-                  onClick={() => downloadReciept(data.url, format(new Date(data.requestDate), 'dd.MM.yyyy'))}
-                >
+
+                {data.url ? (
+                  <button 
+                    className="w-1/5"
+                    onClick={() => downloadReciept(data.url, format(new Date(data.requestDate), 'dd.MM.yyyy'))}
+                  >
                     <div className='w-8 h-8 bg-[#F7FDFC] rounded-full flex justify-center items-center'>
                       <img src={Download} alt='download' className='w-4 h-4' />
                     </div>  
                 </button>
+                ) : (
+                  <div className="w-1/5"/>
+                )}
+               
                 <button 
                   className="w-1/5"
                   onClick={handleReject}

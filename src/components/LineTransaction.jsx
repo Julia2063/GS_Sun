@@ -94,7 +94,7 @@ export const LineTransaction = ({ data, isRequest }) => {
       </div>
       <div className="w-1/6 pl-6 pr-6">
         <div>
-          {isRequest && data.url.length > 0
+          {isRequest && data.url?.length > 0
             ? <a 
                 href={data.url} 
                 className="text-blue-600 underline"
